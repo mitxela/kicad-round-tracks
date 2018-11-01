@@ -1,4 +1,4 @@
-# pcbnewCornerRounder
+# flexRoundingSuite
 ## Introduction
 
 This repository contains three important functions for preparing a high density board for flexpcb production:
