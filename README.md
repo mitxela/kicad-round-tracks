@@ -1,4 +1,5 @@
 # pcbnewCornerRounder
+## Introduction
 
 This repository contains three important functions for preparing a high density board for flexpcb production:
 1) **VIA teardrops**;  usage: import teardrop; teardrop.generate()
@@ -17,7 +18,7 @@ Make sure you run DRC after running these scripts!!! You may need to edit tracks
 Enjoy!
 jcloiacon
 
-## Here are some pictorial examples of the scripts in progress:
+## Examples:
 
 ### LED Footprints
 
