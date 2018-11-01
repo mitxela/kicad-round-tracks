@@ -11,7 +11,9 @@ https://github.com/svofski/kicad-teardrops
 
 I am most proud of the track rounding function, which iteratively places intermediate tracks at every intersection where the track angle difference is sufficiently large. 
 
-This script may also be useful in RF applications ???
+Neither padTeardrop nor roundTracks will operate above an ECO1 zone, which is assumed to be the stiffener layer. 
+
+This script may also be useful in RF applications.
 
 Make sure you run DRC after running these scripts!!! You may need to edit tracks in pre to make sure there is room for the curves. 
 
