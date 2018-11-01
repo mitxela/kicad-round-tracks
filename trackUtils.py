@@ -34,8 +34,8 @@ def normalizeAngleHalf(inputAngle):
 
 #determines whether 2 points are close enough to be considered identical
 def similarPoints(p1, p2):
-	#return (((p1.x > p2.x - 10) and (p1.x < p2.x + 10)) and ((p1.y > p2.y - 10) and (p1.y < p2.y + 10)));
-	return ((p1.x == p2.x) and (p1.y == p2.y));
+	return (((p1.x > p2.x - 10) and (p1.x < p2.x + 10)) and ((p1.y > p2.y - 10) and (p1.y < p2.y + 10)));
+	#return ((p1.x == p2.x) and (p1.y == p2.y));
 
 # the math for shorten track
 def projectInward(t1, amountToShorten):

@@ -19,6 +19,7 @@ def generate():
 
 	board = pcbnew.GetBoard()
 	tracksToAdd = set()	
+	tracksToDelete = set() 
 
 	# get all "modules", seemingly identical to footprints
 	for mod in board.GetModules(): 
@@ -59,12 +60,18 @@ def generate():
 						if (angle > math.pi/4):
 							# shorten this track by the X-dimension of the pad
 							sp = shortenTrack(track, boundingBox.GetHeight()*.7)
+							#if the new track is length 0, slate it for deletion
+							if(track.GetLength() == 0):
+								tracksToDelete.add(track);
 							tracksToAdd.add((cloneWxPoint(sp), pcbnew.wxPoint(boundingBox.GetRight() - track.GetWidth()/2,  boundingBox.GetCenter().y), track.GetWidth(), pad.GetLayer(), pad.GetNet()))
 							tracksToAdd.add((cloneWxPoint(sp), pcbnew.wxPoint(boundingBox.GetLeft()  + track.GetWidth()/2,  boundingBox.GetCenter().y), track.GetWidth(), pad.GetLayer(), pad.GetNet()))
 							tracksToAdd.add((cloneWxPoint(sp), cloneWxPoint(boundingBox.GetCenter()), track.GetWidth(), pad.GetLayer(), pad.GetNet()))
 						else:
 							# shorten this track by the Y-dimension of the pad
 							sp = shortenTrack(track, boundingBox.GetWidth()*.7)
+							#if the new track is length 0, slate it for deletion
+							if(track.GetLength() == 0):
+								tracksToDelete.add(track);
 							tracksToAdd.add((cloneWxPoint(sp), pcbnew.wxPoint(boundingBox.GetCenter().x, boundingBox.GetTop() + track.GetWidth()/2),	track.GetWidth(), pad.GetLayer(), pad.GetNet()))
 							tracksToAdd.add((cloneWxPoint(sp), pcbnew.wxPoint(boundingBox.GetCenter().x, boundingBox.GetBottom() - track.GetWidth()/2), track.GetWidth(), pad.GetLayer(), pad.GetNet()))
 							tracksToAdd.add((cloneWxPoint(sp), cloneWxPoint(boundingBox.GetCenter()), track.GetWidth(), pad.GetLayer(), pad.GetNet()))
@@ -73,13 +80,14 @@ def generate():
 
 	#add all the tracks in post, so as not to cause problems with set iteration
 	for trackpoints in tracksToAdd:
-		(sp, endp, width, layer, net) = trackpoints
-		#sometimes it tries to make 0 length tracks? 
-		if not similarPoints(sp, ep):
-			track = pcbnew.TRACK(board)
-			track.SetStart(sp)
-			track.SetEnd(endp)
-			track.SetWidth(width)
-			track.SetLayer(layer)
-			board.Add(track)
-			track.SetNet(net)
+		(sp, ep, width, layer, net) = trackpoints
+		track = pcbnew.TRACK(board)
+		track.SetStart(sp)
+		track.SetEnd(ep)
+		track.SetWidth(width)
+		track.SetLayer(layer)
+		board.Add(track)
+		track.SetNet(net)
+		
+	for track in tracksToDelete:
+		board.Remove(track)

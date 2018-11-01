@@ -81,7 +81,7 @@ def addIntermediateTracks():
 			tracksHere = [];
 			for t1 in tracks:
 				# it seems vias are treated as tracks ???? this should take care of that
-				if(track.GetLength() > 0):
+				if(t1.GetLength() > 0):
 					if similarPoints(t1.GetStart(), intersection):
 						tracksHere.append(t1)
 					if similarPoints(t1.GetEnd(), intersection):
@@ -115,15 +115,15 @@ def addIntermediateTracks():
 
 		#add all the new tracks in post, so as not to cause problems with set iteration
 		for trackpoints in tracksToAdd:
-			#sometimes it tries to make 0 length tracks? 
-			if not similarPoints(sp, ep):
-				track = pcbnew.TRACK(board)
-				track.SetStart(sp)
-				track.SetEnd(endp)
-				track.SetWidth(width)
-				track.SetLayer(layer)
-				board.Add(track)
-				track.SetNet(net)
+			(sp, ep, width, layer, net) = trackpoints
+
+			track = pcbnew.TRACK(board)
+			track.SetStart(sp)
+			track.SetEnd(ep)
+			track.SetWidth(width)
+			track.SetLayer(layer)
+			board.Add(track)
+			track.SetNet(net)
 
 		# the following really fucks with the vias:
 		# remove all tracks of length 0

@@ -39,7 +39,7 @@ def generate():
 			if(track.GetLength() > 0):
 				for via in vias:
 					if track.IsPointOnEnds(via.GetPosition()):
-						print("track here")
+						#print("track here")
 						# ensure that start is at the via/pad end
 						if similarPoints(track.GetEnd(), via.GetPosition()):
 							reverseTrack(track)
