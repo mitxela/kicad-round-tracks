@@ -73,8 +73,9 @@ def generate():
 						# add extra lines if via/track ratio is high
 						if via.GetWidth()/track.GetWidth() > 5.5:
 							radius /= 2
-							pointB = via[0] + wxPoint(int(vecB[0] * radius), int(vecB[1] * radius))
-							pointC = via[0] + wxPoint(int(vecC[0] * radius), int(vecC[1] * radius))
+							# via side points
+							pointB = via.GetPosition() + wxPoint(int(math.cos(angleB) * radius), int(math.sin(angleB) * radius))
+							pointC = via.GetPosition() + wxPoint(int(math.cos(angleC) * radius), int(math.sin(angleC) * radius))
 							tracksToAdd.add((cloneWxPoint(sp), pointB, track.GetWidth(), track.GetLayer(), track.GetNet()))
 							tracksToAdd.add((cloneWxPoint(sp), pointC, track.GetWidth(), track.GetLayer(), track.GetNet()))
 
