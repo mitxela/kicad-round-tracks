@@ -38,7 +38,7 @@ def generate():
 			# it seems vias are treated as tracks ???? this should take care of that
 			if(track.GetLength() > 0):
 				for via in vias:
-					if track.IsPointOnEnds(via.GetPosition()):
+					if track.IsPointOnEnds(via.GetPosition()) and not stiffened(board, via.GetPosition()):
 						#print("track here")
 						# ensure that start is at the via/pad end
 						if similarPoints(track.GetEnd(), via.GetPosition()):

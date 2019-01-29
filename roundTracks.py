@@ -26,10 +26,13 @@ import pcbnew
 import math
 from trackUtils import *
 
+# maximum path length is set to .2mm, and progressive shortening is 25%
+MAXLENGTH = 0.20
+SCALING   = 0.25
 
 #the main function, adds intermediate tracks 3 times
 def rounder():
-	for i in range(2):
+	for i in range(3):
 		addIntermediateTracks()
 
 
@@ -97,8 +100,7 @@ def addIntermediateTracks():
 			#sort tracks by length, just to find the shortest
 			tracksHere.sort(key = GetTrackLength)
 			#shorten all tracks by the same length, which is a function of existing shortest path length
-			# maximum path length is set arbitrarily to .25mm, and progressive shortening is 35%
-			shortenLength = min(tracksHere[0].GetLength() * .35, .35*SCALE)
+			shortenLength = min(tracksHere[0].GetLength() * MAXLENGTH, SCALING*SCALE)
 
 			#sort these tracks by angle, so new tracks can be drawn between them
 			tracksHere.sort(key = getTrackAngle)
