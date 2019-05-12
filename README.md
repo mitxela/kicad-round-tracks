@@ -38,4 +38,4 @@ limitations under the License.
 
 Original copyright Miles McCoo, 2017  
 extensively modified by Julian Loiacono, Oct 2018  
-updated and repacked as action plugin by Antoine Pintout, May 2019
+multi-layer support and repacked as action plugin by Antoine Pintout, May 2019
