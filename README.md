@@ -23,3 +23,19 @@ In the app menu `Tools > External plugin` click `Round tracks (new file)`.
 This may take some time on large boards.  
 A dialog will indicate the end of the process. From this dialog you may open the resulting file in a new windows to verify that nothing is broken and to plot your board.  
 The new file has the same as the old except the extension is `.kicad_pcb-rounded`.
+
+## History and licence
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+http://www.apache.org/licenses/LICENSE-2.0  
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+Original copyright Miles McCoo, 2017  
+extensively modified by Julian Loiacono, Oct 2018  
+updated and repacked as action plugin by Antoine Pintout, May 2019
