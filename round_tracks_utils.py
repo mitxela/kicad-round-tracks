@@ -21,6 +21,9 @@ def stiffened(board, point):
 				return True
 	return False;
 	
+def RebuildAllZones(pcb):
+    filler = pcbnew.ZONE_FILLER(pcb)
+    filler.Fill(pcb.Zones())
 
 # normalizes any angle to between pi/2 and -pi/2
 def normalizeAngleHalf(inputAngle):
