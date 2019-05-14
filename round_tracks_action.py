@@ -57,8 +57,8 @@ class RoundTracks(RoundTracksDialog):
         # save a copy of the board
 
         self.validate_all_data()
+        self.save_config()
         self.Destroy()
-
         if self.do_create.IsChecked() :
             new_name = self.board.GetFileName()+"-rounded"
             self.board.Save(new_name)
@@ -71,23 +71,24 @@ class RoundTracks(RoundTracksDialog):
                     self.addIntermediateTracks(self.board, maxlength = classes[classname]['max_length'], scaling = classes[classname]['scaling'], netclass = classname)
 
         RebuildAllZones(self.board)
-        self.board.Save(new_name)
+
+        if self.do_create.IsChecked():
+            self.board.Save(new_name)
         if self.do_create.IsChecked() and self.do_open.IsChecked():
             Popen(['pcbnew', new_name])
-        self.save_config()
 
     def on_toggle_create( self, event ):
         self.do_open.Enable(self.do_create.IsChecked())
 
-    def on_toggle_create( self, event ):
+    def on_close( self, event ):
         self.Destroy()
 
     def on_item_editing( self, event ):
         self.validate_all_data()
 
     def load_config(self):
+        new_config = {}
         if os.path.isfile(self.configfilepath):
-            new_config = {}
             with open(self.configfilepath, "r") as configfile:
                 for line in configfile.readlines():
                     params = line[:-1].split("\t")
@@ -100,7 +101,7 @@ class RoundTracks(RoundTracksDialog):
                         new_config[params[0]] = new_config_line
                     except Exception as e:
                         pass
-                self.config['classes'] = new_config
+        self.config['classes'] = new_config
 
     def save_config(self):
         classes = self.config['classes']
