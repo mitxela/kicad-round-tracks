@@ -11,18 +11,21 @@ Clone or unzip this repository in a KiCad plugin folder :
    - `/usr/share/kicad/scripting/plugins/`
    - `~/.kicad/scripting/plugins`
    - `~/.kicad_plugins/`
-- On Windows :
-   - `%KICAD_INSTALL_PATH%/share/kicad/scripting/plugins`
-   - `%APPDATA%/Roaming/kicad/scripting/plugins`
 - On macOS :
    - `/Applications/kicad/Kicad/Contents/SharedSupport/scripting/plugins`
    - `~/Library/Application Support/kicad/scripting/plugins`
    
 ## Usage
-In the app menu `Tools > External plugin` click `Round tracks (new file)`.  
-This may take some time on large boards.  
-A dialog will indicate the end of the process. From this dialog you may open the resulting file in a new windows to verify that nothing is broken and to plot your board.  
-The new file has the same as the old except the extension is `.kicad_pcb-rounded`.
+In the app menu `Tools > External plugin` click `Round tracks (new file)`.
+![Screenshot from 2019-05-14 13-08-01](https://user-images.githubusercontent.com/22014799/57694107-2cef0f00-764b-11e9-9bee-effcec4e3e5a.png)
+You can tweak settings for each Net Class. 
+
+You can choose to make the modification in place or in a duplicate file (default). 
+This plugin works by approximating arcs with many small segments, making PcbNew laggy and track modifications extremely difficult after the plugin has been run. I hope this plugin become eventually obsolete with the futurs enhancements of KiCad. 
+
+The new file has the same name as the old except the extension is `.kicad_pcb-rounded`.
+You may want to verify that nothing is broken by running the DRC before plotting your board. 
+All zones are refilled after the process.
 
 ## History and licence
 
