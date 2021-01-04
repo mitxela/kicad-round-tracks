@@ -37,8 +37,7 @@ class RoundTracksDialog ( wx.Dialog ):
 
 		self.net_class = self.netclasslist.AppendTextColumn( u"Net Class", wx.dataview.DATAVIEW_CELL_INERT, 160, wx.ALIGN_LEFT, wx.dataview.DATAVIEW_COL_RESIZABLE|wx.dataview.DATAVIEW_COL_SORTABLE )
 		self.do_rounding = self.netclasslist.AppendToggleColumn( u"Rounding", wx.dataview.DATAVIEW_CELL_ACTIVATABLE, 80, wx.ALIGN_CENTER, wx.dataview.DATAVIEW_COL_SORTABLE )
-		self.scaling = self.netclasslist.AppendTextColumn( u"Scaling %", wx.dataview.DATAVIEW_CELL_EDITABLE, 80, wx.ALIGN_LEFT, wx.dataview.DATAVIEW_COL_SORTABLE )
-		self.max_length = self.netclasslist.AppendTextColumn( u"Length %", wx.dataview.DATAVIEW_CELL_EDITABLE, 80, wx.ALIGN_LEFT, wx.dataview.DATAVIEW_COL_SORTABLE )
+		self.scaling = self.netclasslist.AppendTextColumn( u"Radius (mm)", wx.dataview.DATAVIEW_CELL_EDITABLE, 100, wx.ALIGN_CENTER, wx.dataview.DATAVIEW_COL_SORTABLE )
 		self.passes = self.netclasslist.AppendTextColumn( u"Passes #", wx.dataview.DATAVIEW_CELL_EDITABLE, 80, wx.ALIGN_LEFT, wx.dataview.DATAVIEW_COL_SORTABLE )
 		grid_vert.Add( self.netclasslist, 1, wx.EXPAND|wx.TOP|wx.RIGHT|wx.LEFT, 5 )
 

@@ -25,9 +25,8 @@ import wx
 from subprocess import Popen
 from .round_tracks_utils import *
 from .round_tracks_gui import RoundTracksDialog
-from pprint import pprint
 
-PERCENT_DEFAULT = 0.25
+RADIUS_DEFAULT = 0.5
 PASSES_DEFAULT = 3
 
 class RoundTracks(RoundTracksDialog):
@@ -42,16 +41,16 @@ class RoundTracks(RoundTracksDialog):
         self.load_config()
         c = self.config['classes']
         if "Default" not in c:
-            self.netclasslist.AppendItem( ["Default", True, str(PERCENT_DEFAULT), str(PERCENT_DEFAULT), str(PASSES_DEFAULT)])
+            self.netclasslist.AppendItem( ["Default", True, str(RADIUS_DEFAULT), str(PASSES_DEFAULT)])
         else:
-            self.netclasslist.AppendItem( ["Default", c['Default']['do_round'],  str(c['Default']['scaling']),  str(c['Default']['max_length']),  str(c['Default']['passes'])])
+            self.netclasslist.AppendItem( ["Default", c['Default']['do_round'],  str(c['Default']['scaling']),  str(c['Default']['passes'])])
         for class_id in self.board.GetNetClasses().NetClasses():
             classname = str(class_id)
             self.netClassCount += 1
             if classname not in c:
-                self.netclasslist.AppendItem( [classname, True, str(PERCENT_DEFAULT), str(PERCENT_DEFAULT), str(PASSES_DEFAULT)])
+                self.netclasslist.AppendItem( [classname, True, str(RADIUS_DEFAULT), str(PASSES_DEFAULT)])
             else:
-                self.netclasslist.AppendItem( [classname, c[classname]['do_round'],  str(c[classname]['scaling']),  str(c[classname]['max_length']),  str(c[classname]['passes'])])
+                self.netclasslist.AppendItem( [classname, c[classname]['do_round'],  str(c[classname]['scaling']),  str(c[classname]['passes'])])
         self.validate_all_data()
 
 
@@ -70,7 +69,7 @@ class RoundTracks(RoundTracksDialog):
         for classname in classes:
             if classes[classname]['do_round']:
                 for i in range(classes[classname]['passes']):
-                    self.addIntermediateTracks(self.board, maxlength = classes[classname]['max_length'], scaling = classes[classname]['scaling'], netclass = classname)
+                    self.addIntermediateTracks(self.board, scaling = classes[classname]['scaling'], netclass = classname)
 
         RebuildAllZones(self.board)
 
@@ -98,8 +97,7 @@ class RoundTracks(RoundTracksDialog):
                     try:
                         new_config_line['do_round'] = params[1] == "True"
                         new_config_line['scaling'] = float(params[2])
-                        new_config_line['max_length'] = float(params[3])
-                        new_config_line['passes'] = int(params[4])
+                        new_config_line['passes'] = int(params[3])
                         new_config[params[0]] = new_config_line
                     except Exception as e:
                         pass
@@ -109,22 +107,22 @@ class RoundTracks(RoundTracksDialog):
         classes = self.config['classes']
         with open(self.configfilepath, "w") as configfile:
             for classname in classes:
-                configfile.write('%s\t%s\t%s\t%s\t%s\n' % (classname, str(classes[classname]['do_round']), str(classes[classname]['scaling']), str(classes[classname]['max_length']), str(classes[classname]['passes'])))
+                configfile.write('%s\t%s\t%s\t%s\n' % (classname, str(classes[classname]['do_round']), str(classes[classname]['scaling']), str(classes[classname]['passes'])))
         pass
 
     def validate_all_data (self):
         new_config = {}
         for i in range(self.netClassCount):
             for j in range(5):
-                if j is 2 or j is 3:
+                if j is 2:
                     # param should be between 0 and 1
                     try:
                         tested_val = float(self.netclasslist.GetTextValue(i, j))
-                        if tested_val < 0 or tested_val > 1:
-                            self.netclasslist.SetTextValue(str(PERCENT_DEFAULT), i, j)
+                        if tested_val < 0:
+                            self.netclasslist.SetTextValue(str(RADIUS_DEFAULT), i, j)
                     except Exception as e:
-                        self.netclasslist.SetTextValue(str(PERCENT_DEFAULT), i, j)
-                if j is 4:
+                        self.netclasslist.SetTextValue(str(RADIUS_DEFAULT), i, j)
+                if j is 3:
                     # param should be between int 1 and 5
                     try:
                         tested_val = int(self.netclasslist.GetTextValue(i, j))
@@ -135,15 +133,14 @@ class RoundTracks(RoundTracksDialog):
             new_config[self.netclasslist.GetTextValue(i, 0)] = {
                 'do_round' : self.netclasslist.GetToggleValue(i, 1),
                 'scaling' : float(self.netclasslist.GetTextValue(i, 2)),
-                'max_length' : float(self.netclasslist.GetTextValue(i, 3)),
-                'passes' : int(self.netclasslist.GetTextValue(i, 4))
+                'passes' : int(self.netclasslist.GetTextValue(i, 3))
             }
         self.config['classes'] = new_config
    
-    def addIntermediateTracks( self, board, maxlength = 0.5, scaling = 0.5, netclass = None):
+    def addIntermediateTracks( self, board, scaling = RADIUS_DEFAULT, netclass = None):
 
-        MAXLENGTH = maxlength # % of length of track used for the arc
-        RADIUS   = pcbnew.FromMM(scaling)  # radius
+        # A 90 degree bend will get a maximum radius of this amount
+        RADIUS = pcbnew.FromMM(scaling /1.707)
 
         # returns a dictionary netcode:netinfo_item
         netcodes = board.GetNetsByNetcode()

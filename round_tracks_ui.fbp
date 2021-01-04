@@ -115,26 +115,15 @@
                             <property name="width">80</property>
                         </object>
                         <object class="dataViewListColumn" expanded="1">
-                            <property name="align">wxALIGN_LEFT</property>
+                            <property name="align">wxALIGN_CENTER</property>
                             <property name="ellipsize"></property>
                             <property name="flags">wxDATAVIEW_COL_SORTABLE</property>
-                            <property name="label">Scaling %</property>
+                            <property name="label">Radius (mm)</property>
                             <property name="mode">wxDATAVIEW_CELL_EDITABLE</property>
                             <property name="name">scaling</property>
                             <property name="permission">protected</property>
                             <property name="type">Text</property>
-                            <property name="width">80</property>
-                        </object>
-                        <object class="dataViewListColumn" expanded="1">
-                            <property name="align">wxALIGN_LEFT</property>
-                            <property name="ellipsize"></property>
-                            <property name="flags">wxDATAVIEW_COL_SORTABLE</property>
-                            <property name="label">Length %</property>
-                            <property name="mode">wxDATAVIEW_CELL_EDITABLE</property>
-                            <property name="name">max_length</property>
-                            <property name="permission">protected</property>
-                            <property name="type">Text</property>
-                            <property name="width">80</property>
+                            <property name="width">100</property>
                         </object>
                         <object class="dataViewListColumn" expanded="1">
                             <property name="align">wxALIGN_LEFT</property>
