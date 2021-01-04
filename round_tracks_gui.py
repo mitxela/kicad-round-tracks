@@ -20,7 +20,11 @@ class RoundTracksDialog ( wx.Dialog ):
 	def __init__( self, parent ):
 		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = u"Round Tracks", pos = wx.DefaultPosition, size = wx.DefaultSize, style = wx.DEFAULT_DIALOG_STYLE )
 
-		self.SetSizeHints( wx.Size( 510,300 ), wx.DefaultSize )
+		import sys
+		if sys.version_info[0] == 2:
+			self.SetSizeHintsSz( wx.DefaultSize, wx.DefaultSize )
+		else:
+			self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 
 		grid_vert = wx.FlexGridSizer( 2, 1, 0, 0 )
 		grid_vert.AddGrowableCol( 0 )

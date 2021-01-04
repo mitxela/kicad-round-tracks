@@ -27,8 +27,8 @@ from .round_tracks_utils import *
 from .round_tracks_gui import RoundTracksDialog
 from pprint import pprint
 
-PERCENT_DEFAULT = 0.5
-PASSES_DEFAULT = 4
+PERCENT_DEFAULT = 0.25
+PASSES_DEFAULT = 3
 
 class RoundTracks(RoundTracksDialog):
 
@@ -38,6 +38,7 @@ class RoundTracks(RoundTracksDialog):
         self.configfilepath = ".".join(self.board.GetFileName().split('.')[:-1])+".round-tracks-config"
         self.action = action
         self.config = {}
+        self.netClassCount = 1
         self.load_config()
         c = self.config['classes']
         if "Default" not in c:
@@ -46,6 +47,7 @@ class RoundTracks(RoundTracksDialog):
             self.netclasslist.AppendItem( ["Default", c['Default']['do_round'],  str(c['Default']['scaling']),  str(c['Default']['max_length']),  str(c['Default']['passes'])])
         for class_id in self.board.GetNetClasses().NetClasses():
             classname = str(class_id)
+            self.netClassCount += 1
             if classname not in c:
                 self.netclasslist.AppendItem( [classname, True, str(PERCENT_DEFAULT), str(PERCENT_DEFAULT), str(PASSES_DEFAULT)])
             else:
@@ -112,7 +114,7 @@ class RoundTracks(RoundTracksDialog):
 
     def validate_all_data (self):
         new_config = {}
-        for i in range(self.netclasslist.GetItemCount()):
+        for i in range(self.netClassCount):
             for j in range(5):
                 if j is 2 or j is 3:
                     # param should be between 0 and 1
@@ -171,7 +173,6 @@ class RoundTracks(RoundTracksDialog):
 
                     #add all the possible intersections to a unique set, for iterating over later
                     intersections = set();  
-                    endings = set();
                     for t1 in range(len(tracks)):
                         for t2 in range(t1+1, len(tracks)):
                             #check if these two tracks share an endpoint
@@ -184,7 +185,7 @@ class RoundTracks(RoundTracksDialog):
 
                     #for each remaining intersection, shorten each track by the same amount, and place a track between.
                     tracksToAdd = []
-                    tracksToShorten = set()
+                    trackLengths = {}
                     for ip in intersections:
                         (newX, newY) = ip;
                         intersection = pcbnew.wxPoint(newX, newY)
@@ -206,8 +207,12 @@ class RoundTracks(RoundTracksDialog):
 
                         #sort tracks by length, just to find the shortest
                         tracksHere.sort(key = GetTrackLength)
+
+                        if id(tracksHere[0]) not in trackLengths:
+                            trackLengths[id(tracksHere[0])] = tracksHere[0].GetLength()
+
                         #shorten all tracks by the same length, which is a function of existing shortest path length
-                        shortenLength = min(tracksHere[0].GetLength() * MAXLENGTH, SCALING*SCALE)
+                        shortenLength = min(trackLengths[id(tracksHere[0])] * MAXLENGTH, SCALING*SCALE)
 
                         #sort these tracks by angle, so new tracks can be drawn between them
                         tracksHere.sort(key = getTrackAngle)

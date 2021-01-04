@@ -60,12 +60,12 @@ def projectInward(t1, amountToShorten):
 
 	return pcbnew.wxPoint(newX, newY)
 
-# shortens a track by an arbitrary amount, maintaning the angle and the endpoint
+# shortens a track by an arbitrary amount, maintaining the angle and the endpoint
 def shortenTrack(t1, amountToShorten):
 	newPoint = projectInward(t1, amountToShorten);
 
 	#always shorten from start
-	t1.SetStart(newPoint)	
+	t1.SetStart(newPoint)
 
 	return newPoint
 
