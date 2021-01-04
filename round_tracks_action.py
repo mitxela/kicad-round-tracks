@@ -143,8 +143,7 @@ class RoundTracks(RoundTracksDialog):
     def addIntermediateTracks( self, board, maxlength = 0.5, scaling = 0.5, netclass = None):
 
         MAXLENGTH = maxlength # % of length of track used for the arc
-        SCALING   = scaling  # radius
-        SCALE = 1000000.0  
+        RADIUS   = pcbnew.FromMM(scaling)  # radius
 
         # returns a dictionary netcode:netinfo_item
         netcodes = board.GetNetsByNetcode()
@@ -200,25 +199,25 @@ class RoundTracks(RoundTracksDialog):
                                     reverseTrack(t1)
                                     tracksHere.append(t1)
 
-
                         # sometimes tracksHere is empty ???
                         if len(tracksHere) == 0:
                             continue
 
-                        #sort tracks by length, just to find the shortest
-                        tracksHere.sort(key = GetTrackLength)
-
-                        if id(tracksHere[0]) not in trackLengths:
-                            trackLengths[id(tracksHere[0])] = tracksHere[0].GetLength()
-
-                        #shorten all tracks by the same length, which is a function of existing shortest path length
-                        shortenLength = min(trackLengths[id(tracksHere[0])] * MAXLENGTH, SCALING*SCALE)
+                        shortest=-1
+                        for t1 in tracksHere:
+                            if id(t1) not in trackLengths:
+                                trackLengths[id(t1)] = t1.GetLength()
+                            if shortest == -1 or trackLengths[id(t1)]<trackLengths[id(shortest)]:
+                                shortest = t1
 
                         #sort these tracks by angle, so new tracks can be drawn between them
                         tracksHere.sort(key = getTrackAngle)
                         #shorten all these tracks
                         for t1 in range(len(tracksHere)):
-                            shortenTrack(tracksHere[t1], shortenLength)
+                            theta = math.pi/2 - getTrackAngleDifference( tracksHere[t1], tracksHere[(t1+1)%len(tracksHere)] )/2
+                            f = 1/(2*math.cos(theta) +2)
+                            shortenTrack(tracksHere[t1], min(trackLengths[id(shortest)] * f, RADIUS))
+
                         #connect the new startpoints in a circle around the old center point
                         for t1 in range(len(tracksHere)):
                             #dont add 2 new tracks in the 2 track case

@@ -3,6 +3,7 @@
 
 import pcbnew
 import math
+from math import pi
 
 def reverseTrack(t1):
 	#flip the track
@@ -86,6 +87,17 @@ def getTrackAngle(t1):
 	#use atan2 so the correct quadrant is returned
 	return math.atan2((t1.GetEnd().y - t1.GetStart().y), (t1.GetEnd().x - t1.GetStart().x));
 
+#board.TracksInNet(2)
+# Get angle between tracks, assumes both start at their intersection
+def getTrackAngleDifference(t1,t2):
+    a1 = math.atan2(t1.GetEnd().y - t1.GetStart().y, t1.GetEnd().x - t1.GetStart().x)
+    a2 = math.atan2(t2.GetEnd().y - t2.GetStart().y, t2.GetEnd().x - t2.GetStart().x)
+    t = a1-a2
+    if t > pi:
+        t = 2*pi-t
+    if t < -pi:
+        t = -2*pi-t
+    return abs(t)
 
 #finds the angle difference between t1 and t2 at intersection ip
 def angleBetween(t1, t2, ip):
