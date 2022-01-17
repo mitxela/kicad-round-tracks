@@ -1,6 +1,9 @@
 # KiCad Round Tracks
 A subdivision-based track rounding plugin for KiCad.
 
+- There is [currently an issue](https://github.com/mitxela/kicad-round-tracks/issues/1) with running this plugin on macOS, I will look into it when I get a chance.
+- The plugin has not yet been updated to work with KiCad 6, I will work on that soon.
+
 This plugin is based on [flexRoundingSuite](https://github.com/jcloiacon/flexRoundingSuite) by Julian Loiacono and [kicad-round-tracks](https://github.com/stimulu/kicad-round-tracks) by Antoine Pintout. My contribution updates the algorithm so that subdivisions are applied equally, resulting in smoother tracks with fewer clearance errors.
 
 For best results, use in conjunction with this [teardrop plugin](https://github.com/NilujePerchut/kicad_scripts).
