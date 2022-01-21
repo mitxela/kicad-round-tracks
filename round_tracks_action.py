@@ -22,7 +22,6 @@ import pcbnew
 import math
 import os
 import wx
-from subprocess import Popen
 from .round_tracks_utils import *
 from .round_tracks_gui import RoundTracksDialog
 
@@ -61,10 +60,9 @@ class RoundTracks(RoundTracksDialog):
         self.save_config()
         self.EndModal(wx.ID_OK)
 
-        if self.do_create.IsChecked() :
-            new_name = self.board.GetFileName()+"-rounded"
-            self.board.Save(new_name)
-            self.board = pcbnew.LoadBoard(new_name, pcbnew.IO_MGR.KICAD_SEXP)
+        if self.do_create.IsChecked():
+            new_name = ".".join(self.board.GetFileName().split('.')[:-1])+"-rounded.kicad_pcb"
+            self.board.SetFileName(new_name)
 
         classes = self.config['classes']
         for classname in classes:
@@ -73,14 +71,6 @@ class RoundTracks(RoundTracksDialog):
                     self.addIntermediateTracks(self.board, scaling = classes[classname]['scaling'], netclass = classname)
 
         RebuildAllZones(self.board)
-
-        if self.do_create.IsChecked():
-            self.board.Save(new_name)
-        if self.do_create.IsChecked() and self.do_open.IsChecked():
-            Popen(['pcbnew', new_name])
-
-    def on_toggle_create( self, event ):
-        self.do_open.Enable(self.do_create.IsChecked())
 
     def on_close( self, event ):
         self.EndModal(wx.ID_OK)

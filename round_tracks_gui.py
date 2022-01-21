@@ -18,7 +18,7 @@ import wx.dataview
 class RoundTracksDialog ( wx.Dialog ):
 
 	def __init__( self, parent ):
-		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = u"Round Tracks", pos = wx.DefaultPosition, size = wx.DefaultSize, style = wx.DEFAULT_DIALOG_STYLE )
+		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = u"Round Tracks", pos = wx.DefaultPosition, size = wx.DefaultSize, style = wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER )
 
 		import sys
 		if sys.version_info[0] == 2:
@@ -33,7 +33,7 @@ class RoundTracksDialog ( wx.Dialog ):
 		grid_vert.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
 
 		self.netclasslist = wx.dataview.DataViewListCtrl( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, 0 )
-		self.netclasslist.SetMinSize( wx.Size( 100,100 ) )
+		self.netclasslist.SetMinSize( wx.Size( 450,100 ) )
 
 		self.net_class = self.netclasslist.AppendTextColumn( u"Net Class", wx.dataview.DATAVIEW_CELL_INERT, 160, wx.ALIGN_LEFT, wx.dataview.DATAVIEW_COL_RESIZABLE|wx.dataview.DATAVIEW_COL_SORTABLE )
 		self.do_rounding = self.netclasslist.AppendToggleColumn( u"Rounding", wx.dataview.DATAVIEW_CELL_ACTIVATABLE, 80, wx.ALIGN_CENTER, wx.dataview.DATAVIEW_COL_SORTABLE )
@@ -47,14 +47,8 @@ class RoundTracksDialog ( wx.Dialog ):
 		grid_horiz.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
 
 		self.do_create = wx.CheckBox( self, wx.ID_ANY, u"create a new file", wx.DefaultPosition, wx.DefaultSize, 0 )
-		self.do_create.SetValue(False)
+		self.do_create.SetValue(True)
 		grid_horiz.Add( self.do_create, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 5 )
-
-		self.do_open = wx.CheckBox( self, wx.ID_ANY, u"open the newly created file", wx.DefaultPosition, wx.DefaultSize, 0 )
-		self.do_open.SetValue(True)
-		self.do_open.Enable(False)
-		grid_horiz.Add( self.do_open, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT|wx.ALL, 5 )
-
 
 		grid_horiz.Add( ( 0, 0), 1, wx.EXPAND, 5 )
 
@@ -76,7 +70,6 @@ class RoundTracksDialog ( wx.Dialog ):
 		# Connect Events
 		self.Bind( wx.EVT_CLOSE, self.on_close )
 		self.netclasslist.Bind( wx.dataview.EVT_DATAVIEW_ITEM_EDITING_DONE, self.on_item_editing, id = wx.ID_ANY )
-		self.do_create.Bind( wx.EVT_CHECKBOX, self.on_toggle_create )
 		self.apply.Bind( wx.EVT_BUTTON, self.run )
 
 	def __del__( self ):
@@ -88,9 +81,6 @@ class RoundTracksDialog ( wx.Dialog ):
 		event.Skip()
 
 	def on_item_editing( self, event ):
-		event.Skip()
-
-	def on_toggle_create( self, event ):
 		event.Skip()
 
 	def run( self, event ):
