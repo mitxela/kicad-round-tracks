@@ -1,9 +1,6 @@
 # KiCad Round Tracks
 A subdivision-based track rounding plugin for KiCad.
 
-- There is [currently an issue](https://github.com/mitxela/kicad-round-tracks/issues/1) with running this plugin on macOS, I will look into it when I get a chance.
-- The plugin has not yet been updated to work with KiCad 6, I will work on that soon.
-
 This plugin is based on [flexRoundingSuite](https://github.com/jcloiacon/flexRoundingSuite) by Julian Loiacono and [kicad-round-tracks](https://github.com/stimulu/kicad-round-tracks) by Antoine Pintout. My contribution updates the algorithm so that subdivisions are applied equally, resulting in smoother tracks with fewer clearance errors.
 
 For best results, use in conjunction with this [teardrop plugin](https://github.com/NilujePerchut/kicad_scripts).
@@ -22,9 +19,10 @@ After running DRC on the output, you can then go back and adjust the original fi
 ## Todo
 - Limit minimum angle between tracks, to avoid unnecessary subdivisions
 - Allow processing only the selection
+- Rewrite all or part of this to use the native filleted tracks in KiCad 6
 
 ## Installation 
-Clone or unzip this repository in a KiCad plugin folder:  
+Clone or unzip this repository in a KiCad plugin folder.
 
 - On linux :
    - `/usr/share/kicad/scripting/plugins/`
@@ -35,6 +33,15 @@ Clone or unzip this repository in a KiCad plugin folder:
    - `~/Library/Application Support/kicad/scripting/plugins`
 - On Windows:
    - `C:\Program Files\KiCad\share\kicad\scripting\plugins\`
+   - `%UserName%\Documents\KiCad\6.0\scripting\plugins\kicad-round-tracks`
+
+You can list the exact paths where KiCad will search for plugins by opening the scripting console in pcbnew and running:
+```
+import pcbnew
+print(pcbnew.GetWizardsSearchPaths())
+```
+
+Under Preferences / Preferences / PCB Editor / Action Plugins, you can choose to add a button to the toolbar for quick access to the plugin.
 
 ## History
 Original copyright Miles McCoo, 2017  
