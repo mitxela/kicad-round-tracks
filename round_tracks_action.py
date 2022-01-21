@@ -59,7 +59,8 @@ class RoundTracks(RoundTracksDialog):
 
         self.validate_all_data()
         self.save_config()
-        self.Destroy()
+        self.EndModal(wx.ID_OK)
+
         if self.do_create.IsChecked() :
             new_name = self.board.GetFileName()+"-rounded"
             self.board.Save(new_name)
@@ -82,7 +83,7 @@ class RoundTracks(RoundTracksDialog):
         self.do_open.Enable(self.do_create.IsChecked())
 
     def on_close( self, event ):
-        self.Destroy()
+        self.EndModal(wx.ID_OK)
 
     def on_item_editing( self, event ):
         self.validate_all_data()
