@@ -249,4 +249,5 @@ class ActionRoundTracks( pcbnew.ActionPlugin ):
         board = pcbnew.GetBoard()
         rt = RoundTracks(board, self)
         rt.ShowModal()
+        rt.Destroy()
 
