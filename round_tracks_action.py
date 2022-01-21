@@ -44,7 +44,7 @@ class RoundTracks(RoundTracksDialog):
             self.netclasslist.AppendItem( ["Default", True, str(RADIUS_DEFAULT), str(PASSES_DEFAULT)])
         else:
             self.netclasslist.AppendItem( ["Default", c['Default']['do_round'],  str(c['Default']['scaling']),  str(c['Default']['passes'])])
-        for class_id in self.board.GetNetClasses().NetClasses():
+        for class_id in self.board.GetDesignSettings().GetNetClasses().NetClasses():
             classname = str(class_id)
             self.netClassCount += 1
             if classname not in c:
@@ -115,7 +115,7 @@ class RoundTracks(RoundTracksDialog):
         new_config = {}
         for i in range(self.netClassCount):
             for j in range(5):
-                if j is 2:
+                if j == 2:
                     # param should be between 0 and 1
                     try:
                         tested_val = float(self.netclasslist.GetTextValue(i, j))
@@ -123,7 +123,7 @@ class RoundTracks(RoundTracksDialog):
                             self.netclasslist.SetTextValue(str(RADIUS_DEFAULT), i, j)
                     except Exception as e:
                         self.netclasslist.SetTextValue(str(RADIUS_DEFAULT), i, j)
-                if j is 3:
+                if j == 3:
                     # param should be between int 1 and 5
                     try:
                         tested_val = int(self.netclasslist.GetTextValue(i, j))
@@ -149,12 +149,9 @@ class RoundTracks(RoundTracksDialog):
         # list off all of the nets in the board.
         for netcode, net in netcodes.items():
 
-            # print(net.GetName(), net.GetClassName())
+            if netclass is not None and netclass == net.GetNetClassName():
 
-            if netclass is not None and netclass == net.GetClassName():
-
-                #print("netcode {}, name {}".format(netcode, net.GetNetname()))
-                allTracks = board.TracksInNet(net.GetNet()) # get all the tracks in this net
+                allTracks = board.TracksInNet(net.GetNetCode()) # get all the tracks in this net
 
                 tracksPerLayer = {}
                 # separate track by layer
@@ -222,19 +219,19 @@ class RoundTracks(RoundTracksDialog):
                             if not (len(tracksHere) == 2 and t1 == 1):
                                 newPoint1 = cloneWxPoint(tracksHere[t1].GetStart())
                                 newPoint2 = cloneWxPoint(tracksHere[(t1+1)%len(tracksHere)].GetStart())
-                                tracksToAdd.append((newPoint1, newPoint2, tracksHere[t1].GetWidth(), tracksHere[t1].GetLayer(), tracksHere[t1].GetNet()))
+                                tracksToAdd.append((newPoint1, newPoint2, tracksHere[t1].GetWidth(), tracksHere[t1].GetLayer(), tracksHere[t1].GetNetCode()))
 
                     #add all the new tracks in post, so as not to cause problems with set iteration
                     for trackpoints in tracksToAdd:
                         (sp, ep, width, layer, net) = trackpoints
 
-                        track = pcbnew.TRACK(board)
+                        track = pcbnew.PCB_TRACK(board)
                         track.SetStart(sp)
                         track.SetEnd(ep)
                         track.SetWidth(width)
                         track.SetLayer(layer)
                         board.Add(track)
-                        track.SetNet(net)
+                        track.SetNetCode(net)
 
 
 class ActionRoundTracks( pcbnew.ActionPlugin ):
