@@ -16,6 +16,8 @@ After running DRC on the output, you can then go back and adjust the original fi
 
 "Radius" is the maximum radius curve that would result from a 90° bend. A smaller curve will be used if the tracks are shorter. The resulting curves will always pass through at least one point of the original tracks, so individual curves can be controlled by splitting tracks into smaller sections. If a curve has too large a radius, placing a small 45° bend will make it smaller. Similarly, if a bigger radius is needed for certain tracks, you can draw an approximate curve with free-angle tracks to achieve this.
 
+I am in the process of updating the plugin to work with KiCad 6. A separate branch named kicad-5 marks the last version compatible with KiCad 5.
+
 ## Todo
 - Limit minimum angle between tracks, to avoid unnecessary subdivisions
 - Allow processing only the selection
