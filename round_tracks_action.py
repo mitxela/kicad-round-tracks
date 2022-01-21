@@ -237,9 +237,9 @@ class RoundTracks(RoundTracksDialog):
 class ActionRoundTracks( pcbnew.ActionPlugin ):
  
     def defaults( self ):
-        self.name = "Round the tracks (new file)"
+        self.name = "Round tracks"
         self.category = "Modify PCB"
-        self.description = "Will round all tracks on the PCB"
+        self.description = "Subdivision-based track rounding"
         self.icon_file_name = os.path.join(os.path.dirname(__file__), "./round_tracks.png")
 
     def Run( self ):

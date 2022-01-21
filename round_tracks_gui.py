@@ -47,11 +47,12 @@ class RoundTracksDialog ( wx.Dialog ):
 		grid_horiz.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
 
 		self.do_create = wx.CheckBox( self, wx.ID_ANY, u"create a new file", wx.DefaultPosition, wx.DefaultSize, 0 )
-		self.do_create.SetValue(True)
+		self.do_create.SetValue(False)
 		grid_horiz.Add( self.do_create, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 5 )
 
 		self.do_open = wx.CheckBox( self, wx.ID_ANY, u"open the newly created file", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.do_open.SetValue(True)
+		self.do_open.Enable(False)
 		grid_horiz.Add( self.do_open, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT|wx.ALL, 5 )
 
 
@@ -82,7 +83,7 @@ class RoundTracksDialog ( wx.Dialog ):
 		pass
 
 
-	# Virtual event handlers, overide them in your derived class
+	# Virtual event handlers, override them in your derived class
 	def on_close( self, event ):
 		event.Skip()
 
