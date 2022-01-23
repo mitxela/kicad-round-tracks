@@ -148,19 +148,23 @@ class RoundTracks(RoundTracksDialog):
         # A 90 degree bend will get a maximum radius of this amount
         RADIUS = pcbnew.FromMM(scaling /(math.sin( math.pi/4 )+1))
 
-        # returns a dictionary netcode:netinfo_item
         netcodes = board.GetNetsByNetcode()
+        allTracks = board.GetTracks()
 
-        # list off all of the nets in the board.
         for netcode, net in netcodes.items():
 
             if netclass is not None and netclass == net.GetNetClassName():
 
-                allTracks = board.TracksInNet(net.GetNetCode()) # get all the tracks in this net
+                # BOARD::TracksInNet casts everything to a PCB_TRACK, even PCB_VIA and PCB_ARC
+                # tracksInNet = board.TracksInNet(net.GetNetCode())
+                tracksInNet = []
+                for t in allTracks:
+                    if t.GetNetCode() == netcode:
+                        tracksInNet.append(t)
 
                 tracksPerLayer = {}
                 # separate track by layer
-                for t in allTracks:
+                for t in tracksInNet:
                     layer = t.GetLayer()
                     if t.GetStart() != t.GetEnd(): # ignore vias
                         if layer not in tracksPerLayer:
@@ -170,11 +174,11 @@ class RoundTracks(RoundTracksDialog):
                 for layer in tracksPerLayer:
                     tracks = tracksPerLayer[layer]
 
-                    #add all the possible intersections to a unique set, for iterating over later
+                    # add all the possible intersections to a unique set, for iterating over later
                     intersections = set();  
                     for t1 in range(len(tracks)):
                         for t2 in range(t1+1, len(tracks)):
-                            #check if these two tracks share an endpoint
+                            # check if these two tracks share an endpoint
                             # reduce it to a 2-part tuple so there are not multiple objects of the same point in the set
                             if(tracks[t1].GetLayer() == tracks[t2].GetLayer()):
                                 if(tracks[t1].IsPointOnEnds(tracks[t2].GetStart())): 
@@ -182,7 +186,7 @@ class RoundTracks(RoundTracksDialog):
                                 if(tracks[t1].IsPointOnEnds(tracks[t2].GetEnd())):
                                     intersections.add((tracks[t2].GetEnd().x, tracks[t2].GetEnd().y))
 
-                    #for each remaining intersection, shorten each track by the same amount, and place a track between.
+                    # for each remaining intersection, shorten each track by the same amount, and place a track between.
                     tracksToAdd = []
                     arcsToAdd = []
                     trackLengths = {}
@@ -191,17 +195,21 @@ class RoundTracks(RoundTracksDialog):
                         intersection = pcbnew.wxPoint(newX, newY)
                         tracksHere = [];
                         for t1 in tracks:
-                            # it seems vias are treated as tracks ???? this should take care of that
-                            if(t1.GetLength() > 0):
+                            if t1.GetLength() > 0:
                                 if similarPoints(t1.GetStart(), intersection):
                                     tracksHere.append(t1)
                                 if similarPoints(t1.GetEnd(), intersection):
-                                    #flip track such that all tracks start at the IP
+                                    # flip track such that all tracks start at the IP
                                     reverseTrack(t1)
                                     tracksHere.append(t1)
 
-                        # sometimes tracksHere is empty ???
-                        if len(tracksHere) == 0:
+                        # if there are any arcs present, skip the intersection entirely
+                        arcsHere = False
+                        for t1 in tracksHere:
+                            if type(t1) == pcbnew.PCB_ARC:
+                                arcsHere = True
+
+                        if arcsHere or len(tracksHere) == 0:
                             continue
 
                         shortest=-1
