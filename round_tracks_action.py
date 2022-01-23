@@ -38,6 +38,11 @@ class RoundTracks(RoundTracksDialog):
         self.config = {}
         self.netClassCount = 1
         self.load_config()
+        if 'checkboxes' not in self.config:
+            self.config['checkboxes'] = {'new_file':False, 'native':True}
+        self.do_create.SetValue( self.config['checkboxes']['new_file'])
+        self.use_native.SetValue( self.config['checkboxes']['native'])
+
         c = self.config['classes']
         if "Default" not in c:
             self.netclasslist.AppendItem( ["Default", True, str(RADIUS_DEFAULT), str(PASSES_DEFAULT)])
@@ -54,8 +59,6 @@ class RoundTracks(RoundTracksDialog):
 
 
     def run( self, event ):
-        # save a copy of the board
-
         self.validate_all_data()
         self.save_config()
         self.EndModal(wx.ID_OK)
@@ -94,7 +97,12 @@ class RoundTracks(RoundTracksDialog):
                         new_config_line['passes'] = int(params[3])
                         new_config[params[0]] = new_config_line
                     except Exception as e:
-                        pass
+                        try:
+                            new_config_line['new_file'] = params[0] == "True"
+                            new_config_line['native'] = params[1] == "True"
+                            self.config['checkboxes'] = new_config_line
+                        except Exception as e:
+                            pass
         self.config['classes'] = new_config
 
     def save_config(self):
@@ -102,7 +110,7 @@ class RoundTracks(RoundTracksDialog):
         with open(self.configfilepath, "w") as configfile:
             for classname in classes:
                 configfile.write('%s\t%s\t%s\t%s\n' % (classname, str(classes[classname]['do_round']), str(classes[classname]['scaling']), str(classes[classname]['passes'])))
-        pass
+            configfile.write('%s\t%s\n' % (str(self.config['checkboxes']['new_file']), str(self.config['checkboxes']['native'])))
 
     def validate_all_data (self):
         new_config = {}
@@ -130,6 +138,7 @@ class RoundTracks(RoundTracksDialog):
                 'passes' : int(self.netclasslist.GetTextValue(i, 3))
             }
         self.config['classes'] = new_config
+        self.config['checkboxes'] = {'new_file':self.do_create.IsChecked(), 'native':self.use_native.IsChecked()}
 
     def addIntermediateTracks( self, board, scaling = RADIUS_DEFAULT, netclass = None, native = False):
 
