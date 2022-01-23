@@ -33,7 +33,10 @@ class RoundTracks(RoundTracksDialog):
     def __init__(self, board, action):
         super(RoundTracks, self).__init__(None)
         self.board = board
-        self.configfilepath = ".".join(self.board.GetFileName().split('.')[:-1])+".round-tracks-config"
+        self.basefilename = os.path.splitext(board.GetFileName())[0]
+        if self.basefilename.endswith('-rounded'):
+            self.basefilename = self.basefilename[:-len('-rounded')]
+        self.configfilepath = self.basefilename+".round-tracks-config"
         self.action = action
         self.config = {}
         self.netClassCount = 1
@@ -64,7 +67,7 @@ class RoundTracks(RoundTracksDialog):
         self.EndModal(wx.ID_OK)
 
         if self.do_create.IsChecked():
-            new_name = ".".join(self.board.GetFileName().split('.')[:-1])+"-rounded.kicad_pcb"
+            new_name = self.basefilename+"-rounded.kicad_pcb"
             self.board.SetFileName(new_name)
 
         classes = self.config['classes']
