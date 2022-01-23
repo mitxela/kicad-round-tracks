@@ -282,3 +282,6 @@ class ActionRoundTracks( pcbnew.ActionPlugin ):
         rt.ShowModal()
         rt.Destroy()
 
+        # this shouldn't be needed, but without it, arcs are sometimes not acknowledged as tangential until they've been moved or the file re-opened
+        # as of kicad 6.0.0, doing pcbnew.Refresh() here causes the arcs to glitch out and create duplicate shapes that can't be deleted
+        pcbnew.UpdateUserInterface()
