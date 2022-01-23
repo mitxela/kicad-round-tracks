@@ -134,7 +134,7 @@ class RoundTracks(RoundTracksDialog):
     def addIntermediateTracks( self, board, scaling = RADIUS_DEFAULT, netclass = None, native = False):
 
         # A 90 degree bend will get a maximum radius of this amount
-        RADIUS = pcbnew.FromMM(scaling /1.707)
+        RADIUS = pcbnew.FromMM(scaling /(math.sin( math.pi/4 )+1))
 
         # returns a dictionary netcode:netinfo_item
         netcodes = board.GetNetsByNetcode()
@@ -204,7 +204,8 @@ class RoundTracks(RoundTracksDialog):
 
                         if native:
                             for t1 in range(len(tracksHere)):
-                                shortenTrack(tracksHere[t1], min(trackLengths[id(shortest)] *0.5, RADIUS*1.707 ))
+                                f = math.sin( getTrackAngleDifference( tracksHere[t1], tracksHere[(t1+1)%len(tracksHere)] )/2 )+1
+                                shortenTrack(tracksHere[t1], min(trackLengths[id(shortest)] *0.5, RADIUS *f ))
 
                             for t1 in range(len(tracksHere)):
                                 if not (len(tracksHere) == 2 and t1 == 1):
@@ -221,7 +222,7 @@ class RoundTracks(RoundTracksDialog):
                             for t1 in range(len(tracksHere)):
                                 theta = math.pi/2 - getTrackAngleDifference( tracksHere[t1], tracksHere[(t1+1)%len(tracksHere)] )/2
                                 f = 1/(2*math.cos(theta) +2)
-                                shortenTrack(tracksHere[t1], min(trackLengths[id(shortest)] * f, RADIUS))
+                                shortenTrack(tracksHere[t1], min(trackLengths[id(shortest)] * f, RADIUS ))
 
                             #connect the new startpoints in a circle around the old center point
                             for t1 in range(len(tracksHere)):
