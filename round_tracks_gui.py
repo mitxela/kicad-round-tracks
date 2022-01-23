@@ -47,19 +47,20 @@ class RoundTracksDialog ( wx.Dialog ):
 		grid_horiz.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
 
 		self.do_create = wx.CheckBox( self, wx.ID_ANY, u"create a new file", wx.DefaultPosition, wx.DefaultSize, 0 )
-		self.do_create.SetValue(True)
+		self.do_create.SetValue(False)
 		grid_horiz.Add( self.do_create, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 5 )
 
 		grid_horiz.Add( ( 0, 0), 1, wx.EXPAND, 5 )
 
-		self.apply = wx.Button( self, wx.ID_ANY, u"Run", wx.DefaultPosition, wx.Size( 120,-1 ), 0 )
+		self.use_native = wx.CheckBox( self, wx.ID_ANY, u"use native fillets", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.use_native.SetValue(True)
+		grid_horiz.Add( self.use_native, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 5 )
 
+		self.apply = wx.Button( self, wx.ID_ANY, u"Run", wx.DefaultPosition, wx.Size( 120,-1 ), 0 )
 		self.apply.SetDefault()
 		grid_horiz.Add( self.apply, 0, wx.ALL|wx.EXPAND, 5 )
 
-
 		grid_vert.Add( grid_horiz, 1, wx.EXPAND, 5 )
-
 
 		self.SetSizer( grid_vert )
 		self.Layout()

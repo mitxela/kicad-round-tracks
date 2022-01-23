@@ -67,8 +67,11 @@ class RoundTracks(RoundTracksDialog):
         classes = self.config['classes']
         for classname in classes:
             if classes[classname]['do_round']:
-                for i in range(classes[classname]['passes']):
-                    self.addIntermediateTracks(self.board, scaling = classes[classname]['scaling'], netclass = classname)
+                if self.use_native.IsChecked():
+                    self.addIntermediateTracks(self.board, scaling = classes[classname]['scaling'], netclass = classname, native = True)
+                else:
+                    for i in range(classes[classname]['passes']):
+                        self.addIntermediateTracks(self.board, scaling = classes[classname]['scaling'], netclass = classname, native = False)
 
         RebuildAllZones(self.board)
 
@@ -127,8 +130,8 @@ class RoundTracks(RoundTracksDialog):
                 'passes' : int(self.netclasslist.GetTextValue(i, 3))
             }
         self.config['classes'] = new_config
-   
-    def addIntermediateTracks( self, board, scaling = RADIUS_DEFAULT, netclass = None):
+
+    def addIntermediateTracks( self, board, scaling = RADIUS_DEFAULT, netclass = None, native = False):
 
         # A 90 degree bend will get a maximum radius of this amount
         RADIUS = pcbnew.FromMM(scaling /1.707)
@@ -169,6 +172,7 @@ class RoundTracks(RoundTracksDialog):
 
                     #for each remaining intersection, shorten each track by the same amount, and place a track between.
                     tracksToAdd = []
+                    arcsToAdd = []
                     trackLengths = {}
                     for ip in intersections:
                         (newX, newY) = ip;
@@ -197,19 +201,35 @@ class RoundTracks(RoundTracksDialog):
 
                         #sort these tracks by angle, so new tracks can be drawn between them
                         tracksHere.sort(key = getTrackAngle)
-                        #shorten all these tracks
-                        for t1 in range(len(tracksHere)):
-                            theta = math.pi/2 - getTrackAngleDifference( tracksHere[t1], tracksHere[(t1+1)%len(tracksHere)] )/2
-                            f = 1/(2*math.cos(theta) +2)
-                            shortenTrack(tracksHere[t1], min(trackLengths[id(shortest)] * f, RADIUS))
 
-                        #connect the new startpoints in a circle around the old center point
-                        for t1 in range(len(tracksHere)):
-                            #dont add 2 new tracks in the 2 track case
-                            if not (len(tracksHere) == 2 and t1 == 1):
-                                newPoint1 = cloneWxPoint(tracksHere[t1].GetStart())
-                                newPoint2 = cloneWxPoint(tracksHere[(t1+1)%len(tracksHere)].GetStart())
-                                tracksToAdd.append((newPoint1, newPoint2, tracksHere[t1].GetWidth(), tracksHere[t1].GetLayer(), tracksHere[t1].GetNetCode()))
+                        if native:
+                            for t1 in range(len(tracksHere)):
+                                shortenTrack(tracksHere[t1], min(trackLengths[id(shortest)] *0.5, RADIUS*1.707 ))
+
+                            for t1 in range(len(tracksHere)):
+                                if not (len(tracksHere) == 2 and t1 == 1):
+                                    theta = math.pi/2 - getTrackAngleDifference( tracksHere[t1], tracksHere[(t1+1)%len(tracksHere)] )/2
+                                    f = 1/(2*math.cos(theta) +2)
+
+                                    sp = cloneWxPoint(tracksHere[t1].GetStart())
+                                    ep = cloneWxPoint(tracksHere[(t1+1)%len(tracksHere)].GetStart())
+                                    mp = pcbnew.wxPoint(newX*(1-f*2)+sp.x*f+ep.x*f, newY*(1-f*2)+sp.y*f+ep.y*f)
+                                    arcsToAdd.append((sp, ep, mp, tracksHere[t1].GetWidth(), tracksHere[t1].GetLayer(), tracksHere[t1].GetNetCode()))
+
+                        else:
+                            #shorten all these tracks
+                            for t1 in range(len(tracksHere)):
+                                theta = math.pi/2 - getTrackAngleDifference( tracksHere[t1], tracksHere[(t1+1)%len(tracksHere)] )/2
+                                f = 1/(2*math.cos(theta) +2)
+                                shortenTrack(tracksHere[t1], min(trackLengths[id(shortest)] * f, RADIUS))
+
+                            #connect the new startpoints in a circle around the old center point
+                            for t1 in range(len(tracksHere)):
+                                #dont add 2 new tracks in the 2 track case
+                                if not (len(tracksHere) == 2 and t1 == 1):
+                                    newPoint1 = cloneWxPoint(tracksHere[t1].GetStart())
+                                    newPoint2 = cloneWxPoint(tracksHere[(t1+1)%len(tracksHere)].GetStart())
+                                    tracksToAdd.append((newPoint1, newPoint2, tracksHere[t1].GetWidth(), tracksHere[t1].GetLayer(), tracksHere[t1].GetNetCode()))
 
                     #add all the new tracks in post, so as not to cause problems with set iteration
                     for trackpoints in tracksToAdd:
@@ -223,6 +243,17 @@ class RoundTracks(RoundTracksDialog):
                         board.Add(track)
                         track.SetNetCode(net)
 
+                    for trackpoints in arcsToAdd:
+                        (sp, ep, mp, width, layer, net) = trackpoints
+
+                        arc = pcbnew.PCB_ARC(board)
+                        arc.SetStart(sp)
+                        arc.SetMid(mp)
+                        arc.SetEnd(ep)
+                        arc.SetWidth(width)
+                        arc.SetLayer(layer)
+                        board.Add(arc)
+                        arc.SetNetCode(net)
 
 class ActionRoundTracks( pcbnew.ActionPlugin ):
  
