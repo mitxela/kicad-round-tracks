@@ -236,8 +236,11 @@ class RoundTracks(RoundTracksDialog):
 
                                     sp = cloneWxPoint(tracksHere[t1].GetStart())
                                     ep = cloneWxPoint(tracksHere[(t1+1)%len(tracksHere)].GetStart())
-                                    mp = pcbnew.wxPoint(newX*(1-f*2)+sp.x*f+ep.x*f, newY*(1-f*2)+sp.y*f+ep.y*f)
-                                    arcsToAdd.append((sp, ep, mp, tracksHere[t1].GetWidth(), tracksHere[t1].GetLayer(), tracksHere[t1].GetNetCode()))
+                                    if halfTrackAngle[t1]> math.pi/2 -0.001:
+                                        tracksToAdd.append((sp, ep, tracksHere[t1].GetWidth(), tracksHere[t1].GetLayer(), tracksHere[t1].GetNetCode()))
+                                    else:
+                                        mp = pcbnew.wxPoint(newX*(1-f*2)+sp.x*f+ep.x*f, newY*(1-f*2)+sp.y*f+ep.y*f)
+                                        arcsToAdd.append((sp, ep, mp, tracksHere[t1].GetWidth(), tracksHere[t1].GetLayer(), tracksHere[t1].GetNetCode()))
 
                         else:
                             #shorten all these tracks
