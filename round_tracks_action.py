@@ -223,13 +223,15 @@ class RoundTracks(RoundTracksDialog):
                         tracksHere.sort(key = getTrackAngle)
 
                         if native:
+                            halfTrackAngle = {} # cache this, because after shortening the length may end up zero
                             for t1 in range(len(tracksHere)):
-                                f = math.sin( getTrackAngleDifference( tracksHere[t1], tracksHere[(t1+1)%len(tracksHere)] )/2 )+1
+                                halfTrackAngle[t1] = getTrackAngleDifference( tracksHere[t1], tracksHere[(t1+1)%len(tracksHere)] )/2
+                                f = math.sin( halfTrackAngle[t1] )+1
                                 shortenTrack(tracksHere[t1], min(trackLengths[id(shortest)] *0.5, RADIUS *f ))
 
                             for t1 in range(len(tracksHere)):
                                 if not (len(tracksHere) == 2 and t1 == 1):
-                                    theta = math.pi/2 - getTrackAngleDifference( tracksHere[t1], tracksHere[(t1+1)%len(tracksHere)] )/2
+                                    theta = math.pi/2 - halfTrackAngle[t1]
                                     f = 1/(2*math.cos(theta) +2)
 
                                     sp = cloneWxPoint(tracksHere[t1].GetStart())
