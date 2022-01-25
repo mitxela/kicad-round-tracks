@@ -150,6 +150,7 @@ class RoundTracks(RoundTracksDialog):
 
         netcodes = board.GetNetsByNetcode()
         allTracks = board.GetTracks()
+        tracksToRemove = []
 
         for netcode, net in netcodes.items():
 
@@ -227,7 +228,8 @@ class RoundTracks(RoundTracksDialog):
                             for t1 in range(len(tracksHere)):
                                 halfTrackAngle[t1] = getTrackAngleDifference( tracksHere[t1], tracksHere[(t1+1)%len(tracksHere)] )/2
                                 f = math.sin( halfTrackAngle[t1] )+1
-                                shortenTrack(tracksHere[t1], min(trackLengths[id(shortest)] *0.5, RADIUS *f ))
+                                if shortenTrack(tracksHere[t1], min(trackLengths[id(shortest)] *0.5, RADIUS *f )):
+                                    tracksToRemove.append(tracksHere[t1])
 
                             for t1 in range(len(tracksHere)):
                                 if not (len(tracksHere) == 2 and t1 == 1):
@@ -280,6 +282,9 @@ class RoundTracks(RoundTracksDialog):
                         arc.SetLayer(layer)
                         board.Add(arc)
                         arc.SetNetCode(net)
+
+        for t in tracksToRemove:
+            board.Remove(t)
 
 class ActionRoundTracks( pcbnew.ActionPlugin ):
  
