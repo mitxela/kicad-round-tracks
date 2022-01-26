@@ -70,14 +70,25 @@ class RoundTracks(RoundTracksDialog):
             new_name = self.basefilename+"-rounded.kicad_pcb"
             self.board.SetFileName(new_name)
 
+        anySelected = False
+        for t in self.board.GetTracks():
+            if t.IsSelected():
+                anySelected = True
+                break
+
         classes = self.config['classes']
         for classname in classes:
             if classes[classname]['do_round']:
                 if self.use_native.IsChecked():
-                    self.addIntermediateTracks(self.board, scaling = classes[classname]['scaling'], netclass = classname, native = True)
+                    self.addIntermediateTracks(self.board, scaling = classes[classname]['scaling'], netclass = classname, native = True, onlySelection = anySelected)
                 else:
                     for i in range(classes[classname]['passes']):
-                        self.addIntermediateTracks(self.board, scaling = classes[classname]['scaling'], netclass = classname, native = False)
+                        self.addIntermediateTracks(self.board, scaling = classes[classname]['scaling'], netclass = classname, native = False, onlySelection = anySelected)
+
+        # Track selection apparently de-syncs if we've modified it
+        if anySelected:
+            for t in self.board.GetTracks():
+                t.ClearSelected()
 
         RebuildAllZones(self.board)
 
@@ -143,7 +154,7 @@ class RoundTracks(RoundTracksDialog):
         self.config['classes'] = new_config
         self.config['checkboxes'] = {'new_file':self.do_create.IsChecked(), 'native':self.use_native.IsChecked()}
 
-    def addIntermediateTracks( self, board, scaling = RADIUS_DEFAULT, netclass = None, native = False):
+    def addIntermediateTracks( self, board, scaling = RADIUS_DEFAULT, netclass = None, native = False, onlySelection = False):
 
         # A 90 degree bend will get a maximum radius of this amount
         RADIUS = pcbnew.FromMM(scaling /(math.sin( math.pi/4 )+1))
@@ -160,7 +171,7 @@ class RoundTracks(RoundTracksDialog):
                 # tracksInNet = board.TracksInNet(net.GetNetCode())
                 tracksInNet = []
                 for t in allTracks:
-                    if t.GetNetCode() == netcode:
+                    if t.GetNetCode() == netcode and (not onlySelection or t.IsSelected()):
                         tracksInNet.append(t)
 
                 tracksPerLayer = {}
@@ -270,6 +281,8 @@ class RoundTracks(RoundTracksDialog):
                         track.SetLayer(layer)
                         board.Add(track)
                         track.SetNetCode(net)
+                        if onlySelection:
+                            track.SetSelected()
 
                     for trackpoints in arcsToAdd:
                         (sp, ep, mp, width, layer, net) = trackpoints
@@ -282,6 +295,8 @@ class RoundTracks(RoundTracksDialog):
                         arc.SetLayer(layer)
                         board.Add(arc)
                         arc.SetNetCode(net)
+                        if onlySelection:
+                            arc.SetSelected()
 
         for t in tracksToRemove:
             board.Remove(t)
