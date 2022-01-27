@@ -192,11 +192,10 @@ class RoundTracks(RoundTracksDialog):
                         for t2 in range(t1+1, len(tracks)):
                             # check if these two tracks share an endpoint
                             # reduce it to a 2-part tuple so there are not multiple objects of the same point in the set
-                            if(tracks[t1].GetLayer() == tracks[t2].GetLayer()):
-                                if(tracks[t1].IsPointOnEnds(tracks[t2].GetStart())): 
-                                    intersections.add((tracks[t2].GetStart().x, tracks[t2].GetStart().y))
-                                if(tracks[t1].IsPointOnEnds(tracks[t2].GetEnd())):
-                                    intersections.add((tracks[t2].GetEnd().x, tracks[t2].GetEnd().y))
+                            if(tracks[t1].IsPointOnEnds(tracks[t2].GetStart())): 
+                                intersections.add((tracks[t2].GetStart().x, tracks[t2].GetStart().y))
+                            if(tracks[t1].IsPointOnEnds(tracks[t2].GetEnd())):
+                                intersections.add((tracks[t2].GetEnd().x, tracks[t2].GetEnd().y))
 
                     # for each remaining intersection, shorten each track by the same amount, and place a track between.
                     tracksToAdd = []
