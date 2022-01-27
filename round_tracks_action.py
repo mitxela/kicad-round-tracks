@@ -170,18 +170,29 @@ class RoundTracks(RoundTracksDialog):
                 # BOARD::TracksInNet casts everything to a PCB_TRACK, even PCB_VIA and PCB_ARC
                 # tracksInNet = board.TracksInNet(net.GetNetCode())
                 tracksInNet = []
+                viasInNet = []
                 for t in allTracks:
                     if t.GetNetCode() == netcode and (not onlySelection or t.IsSelected()):
-                        tracksInNet.append(t)
+                        if type(t) == pcbnew.PCB_VIA:
+                            viasInNet.append(t)
+                        else:
+                            tracksInNet.append(t)
 
                 tracksPerLayer = {}
                 # separate track by layer
                 for t in tracksInNet:
                     layer = t.GetLayer()
-                    if t.GetStart() != t.GetEnd(): # ignore vias
-                        if layer not in tracksPerLayer:
-                            tracksPerLayer[layer] = []
-                        tracksPerLayer[layer].append(t)
+                    if layer not in tracksPerLayer:
+                        tracksPerLayer[layer] = []
+                    tracksPerLayer[layer].append(t)
+
+                for v in viasInNet:
+                    # a buried/blind via will report only layers affected
+                    # a through via will return all 32 possible layers
+                    layerSet = v.GetLayerSet().CuStack()
+                    for layer in tracksPerLayer:
+                        if layer in layerSet:
+                            tracksPerLayer[layer].append(v)
 
                 for layer in tracksPerLayer:
                     tracks = tracksPerLayer[layer]
@@ -206,21 +217,20 @@ class RoundTracks(RoundTracksDialog):
                         intersection = pcbnew.wxPoint(newX, newY)
                         tracksHere = [];
                         for t1 in tracks:
-                            if t1.GetLength() > 0:
-                                if similarPoints(t1.GetStart(), intersection):
-                                    tracksHere.append(t1)
-                                if similarPoints(t1.GetEnd(), intersection):
-                                    # flip track such that all tracks start at the IP
-                                    reverseTrack(t1)
-                                    tracksHere.append(t1)
+                            if similarPoints(t1.GetStart(), intersection):
+                                tracksHere.append(t1)
+                            elif similarPoints(t1.GetEnd(), intersection):
+                                # flip track such that all tracks start at the IP
+                                reverseTrack(t1)
+                                tracksHere.append(t1)
 
-                        # if there are any arcs present, skip the intersection entirely
-                        arcsHere = False
+                        # if there are any arcs or vias present, skip the intersection entirely
+                        skip = False
                         for t1 in tracksHere:
-                            if type(t1) == pcbnew.PCB_ARC:
-                                arcsHere = True
+                            if type(t1) != pcbnew.PCB_TRACK:
+                                skip = True
 
-                        if arcsHere or len(tracksHere) == 0:
+                        if skip or len(tracksHere) == 0:
                             continue
 
                         shortest=-1
