@@ -25,7 +25,7 @@ import wx
 from .round_tracks_utils import *
 from .round_tracks_gui import RoundTracksDialog
 
-RADIUS_DEFAULT = 0.5
+RADIUS_DEFAULT = 2.0
 PASSES_DEFAULT = 3
 
 class RoundTracks(RoundTracksDialog):
