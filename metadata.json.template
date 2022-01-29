@@ -1,0 +1,35 @@
+{
+    "$schema": "https://go.kicad.org/pcm/schemas/v1",
+    "name": "Round Tracks",
+    "description": "A subdivision- and/or native arc-based track rounding plugin.",
+    "description_full": "Algorithmically smooth tracks in a predictable manner. Useful for flex PCBs, or just because it looks cool.",
+    "identifier": "com.github.mitxela.kicad-round-tracks",
+    "type": "plugin",
+    "author": {
+        "name": "mitxela",
+        "contact": {
+            "web": "https://mitxela.com"
+        }
+    },
+    "license": "Apache-2.0",
+    "resources": {
+        "homepage": "https://github.com/mitxela/kicad-round-tracks"
+    },
+    "versions": [
+        {
+            "version": "VERSION",
+            "status": "stable",
+            "kicad_version": "6.0",
+            "download_sha256": "SHA256",
+            "download_size": DOWNLOAD_SIZE,
+            "download_url": "https://github.com/mitxela/kicad-round-tracks/releases/download/VERSION/kicad-round-tracks-VERSION.zip",
+            "install_size": INSTALL_SIZE,
+            "platforms": [
+                "linux",
+                "macos",
+                "windows"
+            ]
+
+        }
+    ]
+}

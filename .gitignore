@@ -102,3 +102,7 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+
+kicad-round-tracks-*.zip
+metadata.json
