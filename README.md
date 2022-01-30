@@ -7,7 +7,7 @@ The goal is to algorithmically melt a PCB design, smoothing all tracks in a pred
 
 For best results, use in conjunction with this [teardrop plugin](https://github.com/NilujePerchut/kicad_scripts).
 
-I have written extensively about my kicad melting experiments [here](https://mitxela.com/projects/melting_kicad).
+I have written extensively about my kicad melting experiments [here](https://mitxela.com/projects/melting_kicad) and [here](https://mitxela.com/projects/melting_kicad_2).
 
 ## Use
 
@@ -43,7 +43,7 @@ Clone or unzip this repository in a KiCad plugin folder.
    - `~/Library/Application Support/kicad/scripting/plugins`
 - On Windows:
    - `C:\Program Files\KiCad\share\kicad\scripting\plugins\`
-   - `%UserName%\Documents\KiCad\6.0\scripting\plugins\kicad-round-tracks`
+   - `%UserName%\Documents\KiCad\6.0\scripting\plugins\`
 
 You can list the exact paths where KiCad will search for plugins by opening the scripting console in pcbnew and running:
 ```
