@@ -247,6 +247,8 @@ class RoundTracks(RoundTracksDialog):
                             halfTrackAngle = {} # cache this, because after shortening the length may end up zero
                             for t1 in range(len(tracksHere)):
                                 halfTrackAngle[t1] = getTrackAngleDifference( tracksHere[t1], tracksHere[(t1+1)%len(tracksHere)] )/2
+
+                            for t1 in range(len(tracksHere)):
                                 f = math.sin( halfTrackAngle[t1] )+1
                                 if shortenTrack(tracksHere[t1], min(trackLengths[id(shortest)] *0.5, RADIUS *f )):
                                     tracksToRemove.append(tracksHere[t1])
