@@ -22,6 +22,7 @@ import pcbnew
 import math
 import os
 import wx
+import time
 from .round_tracks_utils import *
 from .round_tracks_gui import RoundTracksDialog
 
@@ -62,9 +63,9 @@ class RoundTracks(RoundTracksDialog):
 
 
     def run( self, event ):
+        start = time.time()
         self.validate_all_data()
         self.save_config()
-        self.EndModal(wx.ID_OK)
 
         if self.do_create.IsChecked():
             new_name = self.basefilename+"-rounded.kicad_pcb"
@@ -91,6 +92,9 @@ class RoundTracks(RoundTracksDialog):
                 t.ClearSelected()
 
         RebuildAllZones(self.board)
+
+        wx.MessageBox("Done, took {:.3f} seconds".format(time.time()-start))
+        self.EndModal(wx.ID_OK)
 
     def on_close( self, event ):
         self.EndModal(wx.ID_OK)
