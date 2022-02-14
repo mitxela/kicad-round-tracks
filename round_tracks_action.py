@@ -64,6 +64,7 @@ class RoundTracks(RoundTracksDialog):
 
     def run( self, event ):
         start = time.time()
+        self.apply.SetLabel("Working...")
         self.validate_all_data()
         self.save_config()
 
