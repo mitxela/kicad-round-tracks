@@ -318,6 +318,7 @@ class ActionRoundTracks( pcbnew.ActionPlugin ):
         self.name = "Round tracks"
         self.category = "Modify PCB"
         self.description = "Subdivision-based track rounding"
+        self.show_toolbar_button = True
         self.icon_file_name = os.path.join(os.path.dirname(__file__), "./round_tracks.png")
 
     def Run( self ):
