@@ -148,12 +148,39 @@ button to the plugin can be found under:
 <kbd>Preferences</kbd> › <kbd>Preferences...</kbd> › <kbd>PCB Editor</kbd> › <kbd>Action Plugins</kbd>
 
 ## History
-This plugin is based on [flexRoundingSuite] by Julian Loiacono and [kicad-round-tracks][KiCad Round Tracks] by Antoine Pintout. My contribution updated the algorithm so that subdivisions are applied equally, resulting in smoother tracks with fewer clearance errors.
 
-Original copyright Miles McCoo, 2017  
-Extensively modified by Julian Loiacono, Oct 2018  
-Multi-layer support and repacked as action plugin by Antoine Pintout, May 2019  
-Updated subdivision algorithm by mitxela, Jan 2021  
+This plugin is based on:
+
+- **[Flex Rounding Suite]** <br>
+  by `Julian Loiacono` 
+
+- **[Kicad Round Tracks]** <br>
+  by `Antoine Pintout`
+
+*My contribution updated the algorithm so that* <br>
+*subdivisions are applied equally, resulting in* <br>
+*smoother tracks with fewer clearance errors.*
+
+##### `2017`
+
+  **Miles McCoo** <br>
+  *Original Copyright*
+
+##### `2018 / October`
+
+  **Julian Loiacono** <br>
+  *Extensive Modifications*
+
+##### `2019 / May`
+
+  **Antoine Pintout** <br>
+  *Multi-layer Support* <br>
+  *Repacked as Action Plugin*
+
+##### `2021 / January`
+
+  **mitxela** <br>
+  *Updated Subdivision Algorithm*
 
 
 <!----------------------------------------------------------------------------->
@@ -166,7 +193,7 @@ Updated subdivision algorithm by mitxela, Jan 2021
 [Melting B]: https://mitxela.com/projects/melting_kicad_2
 [Melting A]: https://mitxela.com/projects/melting_kicad
 
-[FlexRoundingSuite]: https://github.com/jcloiacon/flexRoundingSuite
+[Flex Rounding Suite]: https://github.com/jcloiacon/flexRoundingSuite
 [KiCad Round Tracks]: https://github.com/stimulu/kicad-round-tracks
 
 [kicad-5]: https://github.com/mitxela/kicad-round-tracks/tree/kicad-5
