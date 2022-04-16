@@ -13,15 +13,26 @@
 
 </div>
 
+## Goal
 
-The goal is to algorithmically melt a PCB design, smoothing all tracks in a predictable manner. 
+The goal is to algorithmically melt a **PCB** design, <br>
+smoothing all tracks in a predictable manner. 
 
+## Teardrop Plugin
 
-For best results, use in conjunction with this [teardrop plugin].
+For best results, use in conjunction with this **[Teardrop Plugin]**.
 
-__Note:__ Currently, the teardrop plugin has not been ported fully ported to KiCad 6. I've fixed the behaviour with native arcs on [my fork of it][Mitxela Teardrop] which should hopefully be merged in soon.
+#### Note
 
-I have written extensively about my kicad melting experiments [here][Melting A] and [here][Melting B].
+Currently, the teardrop plugin has not <br>
+been ported fully ported to KiCad 6.
+
+I've fixed the behavior with native arcs <br>
+on **[My Fork][Mitxela Teardrop]** of it which should hopefully <br>
+be merged in soon.
+
+I have written extensively about my KiCad <br>
+melting experiments **[Here][Melting A]** and over **[Here][Melting B]**.
 
 ## Use
 
