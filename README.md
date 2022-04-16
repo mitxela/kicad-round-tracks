@@ -1,9 +1,21 @@
+
+<div align = center>
+
 # KiCad Round Tracks
-A subdivision- and/or native arc-based track rounding plugin for KiCad.
+
+*A subdivision / native arc-based track rounding plugin for* ***KiCad***
+
+<br>
+
+![example](https://mitxela.com/img/uploads/sw/kicad/example.png)
+
+---
+
+</div>
+
 
 The goal is to algorithmically melt a PCB design, smoothing all tracks in a predictable manner. 
 
-![example](https://mitxela.com/img/uploads/sw/kicad/example.png)
 
 For best results, use in conjunction with this [teardrop plugin](https://github.com/NilujePerchut/kicad_scripts).
 
