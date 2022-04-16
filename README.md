@@ -116,15 +116,36 @@ certain tracks, you can draw an approximate <br>
 curve with free-angle tracks to achieve this.
 
 ## Installation
-Now available from the Plugin and Content manager.
 
-For manual install, clone or unzip this repository in a KiCad plugin folder. You can list the exact paths where KiCad will search for plugins by opening the scripting console in pcbnew and running:
-```
-import pcbnew
-print(pcbnew.GetWizardsSearchPaths())
-```
+Now available from the **Plugin & Content** manager.
 
-Under Preferences / Preferences / PCB Editor / Action Plugins, you can choose whether to have a button on the toolbar for quick access to the plugin.
+### Manual
+
+1. Clone or download & unzip the repository
+
+2. Moved the content to a **KiCad** plugin folder
+
+  You can choose where **KiCad** searches for plugins.
+  
+  For this:
+  
+  1. Open the scripting console in pcbnew
+  
+  2. Run
+  
+  ```python
+  import pcbnew
+  print(pcbnew.GetWizardsSearchPaths())
+  ```
+
+<br>
+
+### Toolbar
+
+The setting for enabling the quick access <br>
+button to the plugin can be found under:
+
+<kbd>Preferences</kbd> › <kbd>Preferences...</kbd> › <kbd>PCB Editor</kbd> › <kbd>Action Plugins</kbd>
 
 ## History
 This plugin is based on [flexRoundingSuite] by Julian Loiacono and [kicad-round-tracks][KiCad Round Tracks] by Antoine Pintout. My contribution updated the algorithm so that subdivisions are applied equally, resulting in smoother tracks with fewer clearance errors.
