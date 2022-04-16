@@ -115,10 +115,6 @@ Similarly, if a bigger radius is needed for <br>
 certain tracks, you can draw an approximate <br>
 curve with free-angle tracks to achieve this.
 
-## Todo
-- Limit minimum angle between tracks, to avoid unnecessary subdivisions
-- In KiCad 6, the undo history state is broken when the plugin runs. A single tap of Ctrl+Z should undo the rounding.
-
 ## Installation
 Now available from the Plugin and Content manager.
 
