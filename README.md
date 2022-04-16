@@ -79,7 +79,7 @@ the selected tracks will get melted.
 
 <br>
 
-#### `Create A New File`
+#### ` Create A New File `
 
 Does not immediately write anything to disk, <br>
 it merely appends `-rounded` to the filename <br>
@@ -88,7 +88,7 @@ overwrite the original.
 
 <br>
 
-#### `Use Native`
+#### ` Use Native `
 
 If this option is ticked, the rounded sections are <br>
 implemented using KiCad 6's native PCB arcs.
@@ -98,8 +98,8 @@ but I still recommend keeping the unrounded <br>
 source PCB file.
 
 I have tried hard to ensure that the output <br>
-PCB is the same, regardless of if native or <br>
-subdivision-based arcs are used.
+PCB is the same, regardless of if native <br>
+or subdivision-based arcs are used.
 
 If the option is ticked, the number <br>
 of passes parameter is ignored.
@@ -113,14 +113,14 @@ There is no loading bar, so if the design is <br>
 complicated the interface might freeze for <br>
 a few seconds while it runs.
 
-You can set the number of passes to be 1, <br>
-and run the plugin repeatedly, and it will <br>
-give the same results, while letting you <br>
-inspect the intermediate stages.
+You can set the number of passes to be `1`, <br>
+and run the plugin repeatedly, and it will give <br>
+the same results, while letting you inspect <br>
+the intermediate stages.
 
 <br>
 
-#### `Radius`
+#### ` Radius `
 
 This option is the maximum radius <br>
 a curve will have on a `90°` bend.
@@ -130,10 +130,10 @@ tracks are shorter, or if the angle <br>
 between them is sharper.
 
 The resulting curves will always pass through <br>
-at least one point of the original tracks.
+at least one of the points of the original tracks.
 
-Thus individual curves can be controlled by <br>
-splitting tracks into smaller sections.
+Thus individual curves can be controlled <br>
+by splitting tracks into smaller sections.
 
 If a curve has too large a radius, placing <br>
 a small `45°` bend will make it smaller.
@@ -198,27 +198,29 @@ This plugin is based on:
 - **[Kicad Round Tracks]** <br>
   by `Antoine Pintout`
 
+<br>
+
 *My contribution updated the algorithm so that* <br>
 *subdivisions are applied equally, resulting in* <br>
 *smoother tracks with fewer clearance errors.*
 
 <br>
 
-##### `2017`
+##### ` 2017 `
 
   **Miles McCoo** <br>
   *Original Copyright*
 
 <br>
 
-##### `2018 / October`
+##### ` 2018 / October `
 
   **Julian Loiacono** <br>
   *Extensive Modifications*
 
 <br>
 
-##### `2019 / May`
+##### ` 2019 / May `
 
   **Antoine Pintout** <br>
   *Multi-layer Support* <br>
@@ -226,7 +228,7 @@ This plugin is based on:
 
 <br>
 
-##### `2021 / January`
+##### ` 2021 / January `
 
   **mitxela** <br>
   *Updated Subdivision Algorithm*
