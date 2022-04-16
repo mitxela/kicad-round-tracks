@@ -7,7 +7,7 @@
 
 <br>
 
-![example](https://mitxela.com/img/uploads/sw/kicad/example.png)
+![Showcase]
 
 ---
 
@@ -17,11 +17,11 @@
 The goal is to algorithmically melt a PCB design, smoothing all tracks in a predictable manner. 
 
 
-For best results, use in conjunction with this [teardrop plugin](https://github.com/NilujePerchut/kicad_scripts).
+For best results, use in conjunction with this [teardrop plugin].
 
-__Note:__ Currently, the teardrop plugin has not been ported fully ported to KiCad 6. I've fixed the behaviour with native arcs on [my fork of it](https://github.com/mitxela/kicad-teardrops/tree/mitxela/V6.0) which should hopefully be merged in soon.
+__Note:__ Currently, the teardrop plugin has not been ported fully ported to KiCad 6. I've fixed the behaviour with native arcs on [my fork of it][Mitxela Teardrop] which should hopefully be merged in soon.
 
-I have written extensively about my kicad melting experiments [here](https://mitxela.com/projects/melting_kicad) and [here](https://mitxela.com/projects/melting_kicad_2).
+I have written extensively about my kicad melting experiments [here][Melting A] and [here][Melting B].
 
 ## Use
 
@@ -55,9 +55,23 @@ print(pcbnew.GetWizardsSearchPaths())
 Under Preferences / Preferences / PCB Editor / Action Plugins, you can choose whether to have a button on the toolbar for quick access to the plugin.
 
 ## History
-This plugin is based on [flexRoundingSuite](https://github.com/jcloiacon/flexRoundingSuite) by Julian Loiacono and [kicad-round-tracks](https://github.com/stimulu/kicad-round-tracks) by Antoine Pintout. My contribution updated the algorithm so that subdivisions are applied equally, resulting in smoother tracks with fewer clearance errors.
+This plugin is based on [flexRoundingSuite] by Julian Loiacono and [kicad-round-tracks][KiCad Round Tracks] by Antoine Pintout. My contribution updated the algorithm so that subdivisions are applied equally, resulting in smoother tracks with fewer clearance errors.
 
 Original copyright Miles McCoo, 2017  
 Extensively modified by Julian Loiacono, Oct 2018  
 Multi-layer support and repacked as action plugin by Antoine Pintout, May 2019  
 Updated subdivision algorithm by mitxela, Jan 2021  
+
+
+<!----------------------------------------------------------------------------->
+
+[Showcase]: https://mitxela.com/img/uploads/sw/kicad/example.png
+
+[Mitxela Teardrop]: https://github.com/mitxela/kicad-teardrops/tree/mitxela/V6.0
+[Teardrop Plugin]: https://github.com/NilujePerchut/kicad_scripts
+
+[Melting B]: https://mitxela.com/projects/melting_kicad_2
+[Melting A]: https://mitxela.com/projects/melting_kicad
+
+[FlexRoundingSuite]: https://github.com/jcloiacon/flexRoundingSuite
+[KiCad Round Tracks]: https://github.com/stimulu/kicad-round-tracks
