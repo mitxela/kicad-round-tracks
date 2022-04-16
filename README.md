@@ -7,8 +7,6 @@ The goal is to algorithmically melt a PCB design, smoothing all tracks in a pred
 
 For best results, use in conjunction with this [teardrop plugin](https://github.com/NilujePerchut/kicad_scripts).
 
-__Note:__ Currently, the teardrop plugin has not been ported fully ported to KiCad 6. I've fixed the behaviour with native arcs on [my fork of it](https://github.com/mitxela/kicad-teardrops/tree/mitxela/V6.0) which should hopefully be merged in soon.
-
 I have written extensively about my kicad melting experiments [here](https://mitxela.com/projects/melting_kicad) and [here](https://mitxela.com/projects/melting_kicad_2).
 
 ## Use
@@ -26,10 +24,6 @@ If "use native" is ticked, the rounded sections are implemented using KiCad 6's 
 Otherwise, the curves are generated from many small straight sections. 2 or 3 passes is usually sufficient. There is no loading bar, so if the design is complicated the interface might freeze for a few seconds while it runs. You can set the number of passes to be 1, and run the plugin repeatedly, and it will give the same results, while letting you inspect the intermediate stages.
 
 "Radius" is the maximum radius curve that would result from a 90° bend. A smaller curve will be used if the tracks are shorter, or if the angle between them is sharper. The resulting curves will always pass through at least one point of the original tracks, so individual curves can be controlled by splitting tracks into smaller sections. If a curve has too large a radius, placing a small 45° bend will make it smaller. Similarly, if a bigger radius is needed for certain tracks, you can draw an approximate curve with free-angle tracks to achieve this.
-
-## Todo
-- Limit minimum angle between tracks, to avoid unnecessary subdivisions
-- In KiCad 6, the undo history state is broken when the plugin runs. A single tap of Ctrl+Z should undo the rounding.
 
 ## Installation
 Now available from the Plugin and Content manager.
