@@ -1,4 +1,6 @@
 
+[![Badge License]][License]
+
 <div align = center>
 
 # KiCad Round Tracks
@@ -235,6 +237,9 @@ This plugin is based on:
 
 
 <!----------------------------------------------------------------------------->
+
+[Badge License]: https://img.shields.io/badge/License-Apache_2.0-blue.svg?style=for-the-badge
+[License]: LICENSE
 
 [Showcase]: https://mitxela.com/img/uploads/sw/kicad/example.png
 
