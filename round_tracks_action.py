@@ -171,6 +171,8 @@ class RoundTracks(RoundTracksDialog):
 
         netcodes = board.GetNetsByNetcode()
         allTracks = board.GetTracks()
+        allPads = board.GetPads()
+
         tracksToRemove = []
 
         for netcode, net in netcodes.items():
@@ -203,6 +205,25 @@ class RoundTracks(RoundTracksDialog):
                     for layer in tracksPerLayer:
                         if layer in layerSet:
                             tracksPerLayer[layer].append(v)
+
+                # TH pads cover all layers
+                # SMD/CONN pads only touch F.Cu and B.Cu (layers 0 and 31)
+                # Due to glitch in KiCad, pad.GetLayer() always returns 0. Need to use GetLayerSet().Contains() to actually check
+
+                padsInNet = []
+                FCuPadsInNet = []
+                BCuPadsInNet = []
+
+                for p in allPads:
+                    if p.GetNetCode() == netcode and (not onlySelection or t.IsSelected()):
+                        attr = p.GetAttribute()
+                        if attr == pcbnew.PAD_ATTRIB_NPTH or attr == pcbnew.PAD_ATTRIB_PTH:
+                            padsInNet.append(p)
+                        else:
+                            if p.GetLayerSet().Contains(31):
+                                BCuPadsInNet.append(p)
+                            else:
+                                FCuPadsInNet.append(p)
 
                 for layer in tracksPerLayer:
                     tracks = tracksPerLayer[layer]
@@ -242,6 +263,22 @@ class RoundTracks(RoundTracksDialog):
 
                         if avoid_junctions and len(tracksHere)>2:
                             skip = True
+
+                        for p in padsInNet:
+                            if similarPoints(p.GetCenter(), intersection):
+                                skip = True
+                                break
+
+                        if layer == 0:
+                            for p in FCuPadsInNet:
+                                if similarPoints(p.GetCenter(), intersection):
+                                    skip = True
+                                    break
+                        elif layer == 31:
+                            for p in BCuPadsInNet:
+                                if similarPoints(p.GetCenter(), intersection):
+                                    skip = True
+                                    break
 
                         if skip or len(tracksHere) == 0:
                             continue
