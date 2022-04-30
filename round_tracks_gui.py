@@ -48,13 +48,15 @@ class RoundTracksDialog ( wx.Dialog ):
 
 		self.do_create = wx.CheckBox( self, wx.ID_ANY, u"create a new file", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.do_create.SetValue(False)
-		grid_horiz.Add( self.do_create, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 5 )
-
-		grid_horiz.Add( ( 0, 0), 1, wx.EXPAND, 5 )
+		grid_horiz.Add( self.do_create, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_LEFT, 5 )
 
 		self.use_native = wx.CheckBox( self, wx.ID_ANY, u"use native fillets", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.use_native.SetValue(True)
-		grid_horiz.Add( self.use_native, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 5 )
+		grid_horiz.Add( self.use_native, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_LEFT, 5 )
+
+		self.avoid_junctions = wx.CheckBox( self, wx.ID_ANY, u"ignore junctions", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.avoid_junctions.SetValue(False)
+		grid_horiz.Add( self.avoid_junctions, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_LEFT, 5 )
 
 		self.apply = wx.Button( self, wx.ID_ANY, u"Run", wx.DefaultPosition, wx.Size( 120,-1 ), 0 )
 		self.apply.SetDefault()

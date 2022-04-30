@@ -43,9 +43,10 @@ class RoundTracks(RoundTracksDialog):
         self.netClassCount = 1
         self.load_config()
         if 'checkboxes' not in self.config:
-            self.config['checkboxes'] = {'new_file':False, 'native':True}
+            self.config['checkboxes'] = {'new_file':False, 'native':True, 'avoid_junctions':False}
         self.do_create.SetValue( self.config['checkboxes']['new_file'])
         self.use_native.SetValue( self.config['checkboxes']['native'])
+        self.avoid_junctions.SetValue( self.config['checkboxes']['avoid_junctions'])
 
         c = self.config['classes']
         if "Default" not in c:
@@ -78,14 +79,15 @@ class RoundTracks(RoundTracksDialog):
                 anySelected = True
                 break
 
+        avoid = self.avoid_junctions.IsChecked()
         classes = self.config['classes']
         for classname in classes:
             if classes[classname]['do_round']:
                 if self.use_native.IsChecked():
-                    self.addIntermediateTracks(self.board, scaling = classes[classname]['scaling'], netclass = classname, native = True, onlySelection = anySelected)
+                    self.addIntermediateTracks(self.board, scaling = classes[classname]['scaling'], netclass = classname, native = True, onlySelection = anySelected, avoid_junctions = avoid)
                 else:
                     for i in range(classes[classname]['passes']):
-                        self.addIntermediateTracks(self.board, scaling = classes[classname]['scaling'], netclass = classname, native = False, onlySelection = anySelected)
+                        self.addIntermediateTracks(self.board, scaling = classes[classname]['scaling'], netclass = classname, native = False, onlySelection = anySelected, avoid_junctions = avoid)
 
         # Track selection apparently de-syncs if we've modified it
         if anySelected:
@@ -121,6 +123,7 @@ class RoundTracks(RoundTracksDialog):
                         try:
                             new_config_line['new_file'] = params[0] == "True"
                             new_config_line['native'] = params[1] == "True"
+                            new_config_line['avoid_junctions'] = params[2] == "True"
                             self.config['checkboxes'] = new_config_line
                         except Exception as e:
                             pass
@@ -131,7 +134,7 @@ class RoundTracks(RoundTracksDialog):
         with open(self.configfilepath, "w") as configfile:
             for classname in classes:
                 configfile.write('%s\t%s\t%s\t%s\n' % (classname, str(classes[classname]['do_round']), str(classes[classname]['scaling']), str(classes[classname]['passes'])))
-            configfile.write('%s\t%s\n' % (str(self.config['checkboxes']['new_file']), str(self.config['checkboxes']['native'])))
+            configfile.write('%s\t%s\t%s\n' % (str(self.config['checkboxes']['new_file']), str(self.config['checkboxes']['native']), str(self.config['checkboxes']['avoid_junctions'])))
 
     def validate_all_data (self):
         new_config = {}
@@ -159,9 +162,9 @@ class RoundTracks(RoundTracksDialog):
                 'passes' : int(self.netclasslist.GetTextValue(i, 3))
             }
         self.config['classes'] = new_config
-        self.config['checkboxes'] = {'new_file':self.do_create.IsChecked(), 'native':self.use_native.IsChecked()}
+        self.config['checkboxes'] = {'new_file':self.do_create.IsChecked(), 'native':self.use_native.IsChecked(), 'avoid_junctions':self.avoid_junctions.IsChecked()}
 
-    def addIntermediateTracks( self, board, scaling = RADIUS_DEFAULT, netclass = None, native = False, onlySelection = False):
+    def addIntermediateTracks( self, board, scaling = RADIUS_DEFAULT, netclass = None, native = False, onlySelection = False, avoid_junctions = False):
 
         # A 90 degree bend will get a maximum radius of this amount
         RADIUS = pcbnew.FromMM(scaling /(math.sin( math.pi/4 )+1))
@@ -236,6 +239,9 @@ class RoundTracks(RoundTracksDialog):
                         for t1 in tracksHere:
                             if type(t1) != pcbnew.PCB_TRACK:
                                 skip = True
+
+                        if avoid_junctions and len(tracksHere)>2:
+                            skip = True
 
                         if skip or len(tracksHere) == 0:
                             continue
