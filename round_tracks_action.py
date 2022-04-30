@@ -94,7 +94,9 @@ class RoundTracks(RoundTracksDialog):
 
         RebuildAllZones(self.board)
 
-        wx.MessageBox("Done, took {:.3f} seconds".format(time.time()-start))
+        dt = time.time()-start
+        if dt>0.1:
+            wx.MessageBox("Done, took {:.3f} seconds".format(time.time()-start))
         self.EndModal(wx.ID_OK)
 
     def on_close( self, event ):
