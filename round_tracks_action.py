@@ -255,14 +255,15 @@ class RoundTracks(RoundTracksDialog):
                                 reverseTrack(t1)
                                 tracksHere.append(t1)
 
+                        if len(tracksHere) == 0 or (avoid_junctions and len(tracksHere)>2):
+                            continue
+
                         # if there are any arcs or vias present, skip the intersection entirely
                         skip = False
                         for t1 in tracksHere:
                             if type(t1) != pcbnew.PCB_TRACK:
                                 skip = True
-
-                        if avoid_junctions and len(tracksHere)>2:
-                            skip = True
+                                break
 
                         for p in padsInNet:
                             if similarPoints(p.GetCenter(), intersection):
@@ -280,7 +281,7 @@ class RoundTracks(RoundTracksDialog):
                                     skip = True
                                     break
 
-                        if skip or len(tracksHere) == 0:
+                        if skip:
                             continue
 
                         shortest=-1
