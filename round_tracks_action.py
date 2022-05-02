@@ -266,18 +266,18 @@ class RoundTracks(RoundTracksDialog):
                                 break
 
                         for p in padsInNet:
-                            if similarPoints(p.GetCenter(), intersection):
+                            if withinPad(p, intersection):
                                 skip = True
                                 break
 
                         if layer == 0:
                             for p in FCuPadsInNet:
-                                if similarPoints(p.GetCenter(), intersection):
+                                if withinPad(p, intersection):
                                     skip = True
                                     break
                         elif layer == 31:
                             for p in BCuPadsInNet:
-                                if similarPoints(p.GetCenter(), intersection):
+                                if withinPad(p, intersection):
                                     skip = True
                                     break
 

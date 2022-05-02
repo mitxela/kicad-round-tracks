@@ -22,6 +22,21 @@ def RebuildAllZones(pcb):
 def similarPoints(p1, p2):
     return (((p1.x > p2.x - tolerance) and (p1.x < p2.x + tolerance)) and ((p1.y > p2.y - tolerance) and (p1.y < p2.y + tolerance)))
 
+# test if an intersection is within the bounds of a pad
+def withinPad(pad, a):
+    shape = pad.GetShape()
+    if shape == pcbnew.PAD_SHAPE_CIRCLE:
+        b = pad.GetCenter()
+        r = pad.GetBoundingRadius()
+        return r > math.sqrt( (a.x-b.x)*(a.x-b.x) + (a.y-b.y)*(a.y-b.y) )
+    else:
+    # PAD_SHAPE_RECT, PAD_SHAPE_OVAL, PAD_SHAPE_TRAPEZOID, PAD_SHAPE_ROUNDRECT, PAD_SHAPE_CHAMFERED_RECT, PAD_SHAPE_CUSTOM
+    # TODO: We should probably handle each type separately
+    # There is e.g. pad.GetCustomShapeAsPolygon().Contains(), but not sure if there is a generic pad contains method. 
+
+        # Approximate everything except circle as its bounding box
+        return pad.GetBoundingBox().Contains(a)
+
 # shortens a track by an arbitrary amount, maintaining the angle and the endpoint
 def shortenTrack(t1, amountToShorten):
     # return true if amount to shorten exceeds length
