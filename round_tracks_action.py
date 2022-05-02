@@ -265,19 +265,20 @@ class RoundTracks(RoundTracksDialog):
                                 skip = True
                                 break
 
+                        # If the intersection is within a pad, but none of the tracks end within the pad, skip
                         for p in padsInNet:
-                            if withinPad(p, intersection):
+                            if withinPad(p, intersection, tracksHere):
                                 skip = True
                                 break
 
                         if layer == 0:
                             for p in FCuPadsInNet:
-                                if withinPad(p, intersection):
+                                if withinPad(p, intersection, tracksHere):
                                     skip = True
                                     break
                         elif layer == 31:
                             for p in BCuPadsInNet:
-                                if withinPad(p, intersection):
+                                if withinPad(p, intersection, tracksHere):
                                     skip = True
                                     break
 
