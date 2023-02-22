@@ -53,7 +53,7 @@ class RoundTracks(RoundTracksDialog):
             self.netclasslist.AppendItem( ["Default", True, str(RADIUS_DEFAULT), str(PASSES_DEFAULT)])
         else:
             self.netclasslist.AppendItem( ["Default", c['Default']['do_round'],  str(c['Default']['scaling']),  str(c['Default']['passes'])])
-        for class_id in self.board.GetDesignSettings().GetNetClasses().NetClasses():
+        for class_id in self.board.GetNetClasses():
             classname = str(class_id)
             self.netClassCount += 1
             if classname not in c:
