@@ -310,8 +310,8 @@ class RoundTracks(RoundTracksDialog):
                                     theta = math.pi/2 - halfTrackAngle[t1]
                                     f = 1/(2*math.cos(theta) +2)
 
-                                    sp = cloneWxPoint(tracksHere[t1].GetStart())
-                                    ep = cloneWxPoint(tracksHere[(t1+1)%len(tracksHere)].GetStart())
+                                    sp = cloneVECTOR2I(tracksHere[t1].GetStart())
+                                    ep = cloneVECTOR2I(tracksHere[(t1+1)%len(tracksHere)].GetStart())
                                     if halfTrackAngle[t1]> math.pi/2 -0.001:
                                         tracksToAdd.append((sp, ep, tracksHere[t1].GetWidth(), tracksHere[t1].GetLayer(), tracksHere[t1].GetNetCode()))
                                     else:
@@ -329,8 +329,8 @@ class RoundTracks(RoundTracksDialog):
                             for t1 in range(len(tracksHere)):
                                 #dont add 2 new tracks in the 2 track case
                                 if not (len(tracksHere) == 2 and t1 == 1):
-                                    newPoint1 = cloneWxPoint(tracksHere[t1].GetStart())
-                                    newPoint2 = cloneWxPoint(tracksHere[(t1+1)%len(tracksHere)].GetStart())
+                                    newPoint1 = cloneVECTOR2I(tracksHere[t1].GetStart())
+                                    newPoint2 = cloneVECTOR2I(tracksHere[(t1+1)%len(tracksHere)].GetStart())
                                     tracksToAdd.append((newPoint1, newPoint2, tracksHere[t1].GetWidth(), tracksHere[t1].GetLayer(), tracksHere[t1].GetNetCode()))
 
                     #add all the new tracks in post, so as not to cause problems with set iteration

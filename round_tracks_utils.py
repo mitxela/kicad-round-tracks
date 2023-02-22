@@ -4,13 +4,13 @@ from math import pi
 
 tolerance = 10 # in nanometres
 
-def cloneWxPoint(wxp):
-    return pcbnew.VECTOR2I(wxp.x, wxp.y)
+def cloneVECTOR2I(vec):
+    return pcbnew.VECTOR2I(vec.x, vec.y)
 
 def reverseTrack(t1):
     #flip the track
-    sp = cloneWxPoint(t1.GetStart())
-    ep = cloneWxPoint(t1.GetEnd())
+    sp = cloneVECTOR2I(t1.GetStart())
+    ep = cloneVECTOR2I(t1.GetEnd())
     t1.SetStart(ep)
     t1.SetEnd(sp)
 
@@ -43,7 +43,7 @@ def shortenTrack(t1, amountToShorten):
     # return true if amount to shorten exceeds length
 
     if amountToShorten + tolerance >= t1.GetLength():
-        t1.SetStart(cloneWxPoint(t1.GetEnd()))
+        t1.SetStart(cloneVECTOR2I(t1.GetEnd()))
         return True
 
     angle = normalizeAngle(getTrackAngle(t1))
