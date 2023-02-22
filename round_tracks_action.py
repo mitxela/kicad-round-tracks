@@ -245,7 +245,7 @@ class RoundTracks(RoundTracksDialog):
                     trackLengths = {}
                     for ip in intersections:
                         (newX, newY) = ip;
-                        intersection = pcbnew.wxPoint(newX, newY)
+                        intersection = pcbnew.VECTOR2I(newX, newY)
                         tracksHere = [];
                         for t1 in tracks:
                             if similarPoints(t1.GetStart(), intersection):
@@ -315,7 +315,7 @@ class RoundTracks(RoundTracksDialog):
                                     if halfTrackAngle[t1]> math.pi/2 -0.001:
                                         tracksToAdd.append((sp, ep, tracksHere[t1].GetWidth(), tracksHere[t1].GetLayer(), tracksHere[t1].GetNetCode()))
                                     else:
-                                        mp = pcbnew.wxPoint(newX*(1-f*2)+sp.x*f+ep.x*f, newY*(1-f*2)+sp.y*f+ep.y*f)
+                                        mp = pcbnew.VECTOR2I(int(newX*(1-f*2)+sp.x*f+ep.x*f), int(newY*(1-f*2)+sp.y*f+ep.y*f))
                                         arcsToAdd.append((sp, ep, mp, tracksHere[t1].GetWidth(), tracksHere[t1].GetLayer(), tracksHere[t1].GetNetCode()))
 
                         else:
