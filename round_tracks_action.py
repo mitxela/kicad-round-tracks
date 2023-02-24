@@ -105,7 +105,8 @@ class RoundTracks(RoundTracksDialog):
         self.EndModal(wx.ID_OK)
 
     def on_item_editing( self, event ):
-        self.validate_all_data()
+        if bool(self.netclasslist):
+            self.validate_all_data()
 
     def load_config(self):
         new_config = {}
