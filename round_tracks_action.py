@@ -131,10 +131,13 @@ class RoundTracks(RoundTracksDialog):
 
     def save_config(self):
         classes = self.config['classes']
-        with open(self.configfilepath, "w") as configfile:
-            for classname in classes:
-                configfile.write('%s\t%s\t%s\t%s\n' % (classname, str(classes[classname]['do_round']), str(classes[classname]['scaling']), str(classes[classname]['passes'])))
-            configfile.write('%s\t%s\t%s\n' % (str(self.config['checkboxes']['new_file']), str(self.config['checkboxes']['native']), str(self.config['checkboxes']['avoid_junctions'])))
+        try:
+            with open(self.configfilepath, "w") as configfile:
+                for classname in classes:
+                    configfile.write('%s\t%s\t%s\t%s\n' % (classname, str(classes[classname]['do_round']), str(classes[classname]['scaling']), str(classes[classname]['passes'])))
+                configfile.write('%s\t%s\t%s\n' % (str(self.config['checkboxes']['new_file']), str(self.config['checkboxes']['native']), str(self.config['checkboxes']['avoid_junctions'])))
+        except PermissionError:
+            pass
 
     def validate_all_data (self):
         new_config = {}
