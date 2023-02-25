@@ -69,6 +69,8 @@ class RoundTracks(RoundTracksDialog):
         self.validate_all_data()
         self.save_config()
 
+        self.prog = wx.ProgressDialog("Processing", "Starting...", 100, self, wx.PD_AUTO_HIDE|wx.PD_APP_MODAL|wx.PD_ELAPSED_TIME)
+
         if self.do_create.IsChecked():
             new_name = self.basefilename+"-rounded.kicad_pcb"
             self.board.SetFileName(new_name)
@@ -84,10 +86,10 @@ class RoundTracks(RoundTracksDialog):
         for classname in classes:
             if classes[classname]['do_round']:
                 if self.use_native.IsChecked():
-                    self.addIntermediateTracks(self.board, scaling = classes[classname]['scaling'], netclass = classname, native = True, onlySelection = anySelected, avoid_junctions = avoid)
+                    self.addIntermediateTracks(scaling = classes[classname]['scaling'], netclass = classname, native = True, onlySelection = anySelected, avoid_junctions = avoid)
                 else:
                     for i in range(classes[classname]['passes']):
-                        self.addIntermediateTracks(self.board, scaling = classes[classname]['scaling'], netclass = classname, native = False, onlySelection = anySelected, avoid_junctions = avoid)
+                        self.addIntermediateTracks(scaling = classes[classname]['scaling'], netclass = classname, native = False, onlySelection = anySelected, avoid_junctions = avoid)
 
         # Track selection apparently de-syncs if we've modified it
         if anySelected:
@@ -96,9 +98,11 @@ class RoundTracks(RoundTracksDialog):
 
         RebuildAllZones(self.board)
 
+        if bool(self.prog):
+            self.prog.Destroy()
         dt = time.time()-start
         if dt>0.1:
-            wx.MessageBox("Done, took {:.3f} seconds".format(time.time()-start))
+            wx.MessageBox("Done, took {:.3f} seconds".format(time.time()-start), parent=self)
         self.EndModal(wx.ID_OK)
 
     def on_close( self, event ):
@@ -168,11 +172,12 @@ class RoundTracks(RoundTracksDialog):
         self.config['classes'] = new_config
         self.config['checkboxes'] = {'new_file':self.do_create.IsChecked(), 'native':self.use_native.IsChecked(), 'avoid_junctions':self.avoid_junctions.IsChecked()}
 
-    def addIntermediateTracks( self, board, scaling = RADIUS_DEFAULT, netclass = None, native = False, onlySelection = False, avoid_junctions = False):
+    def addIntermediateTracks( self, scaling = RADIUS_DEFAULT, netclass = None, native = False, onlySelection = False, avoid_junctions = False):
 
         # A 90 degree bend will get a maximum radius of this amount
         RADIUS = pcbnew.FromMM(scaling /(math.sin( math.pi/4 )+1))
 
+        board = self.board
         netcodes = board.GetNetsByNetcode()
         allTracks = board.GetTracks()
         allPads = board.GetPads()
@@ -364,6 +369,8 @@ class RoundTracks(RoundTracksDialog):
                         arc.SetNetCode(net)
                         if onlySelection:
                             arc.SetSelected()
+
+            self.prog.Pulse(f"Netclass: {netclass}, {netcode} of {len(netcodes)}")
 
         for t in tracksToRemove:
             board.Remove(t)
