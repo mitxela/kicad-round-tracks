@@ -100,6 +100,7 @@ class RoundTracks(RoundTracksDialog):
 
         if bool(self.prog):
             self.prog.Destroy()
+            wx.Yield()
         dt = time.time()-start
         if dt>0.1:
             wx.MessageBox("Done, took {:.3f} seconds".format(time.time()-start), parent=self)
