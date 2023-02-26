@@ -14,10 +14,6 @@ def reverseTrack(t1):
     t1.SetStart(ep)
     t1.SetEnd(sp)
 
-def RebuildAllZones(pcb):
-    filler = pcbnew.ZONE_FILLER(pcb)
-    filler.Fill(pcb.Zones())
-
 # determines whether 2 points are close enough to be considered identical
 def similarPoints(p1, p2):
     return (((p1.x > p2.x - tolerance) and (p1.x < p2.x + tolerance)) and ((p1.y > p2.y - tolerance) and (p1.y < p2.y + tolerance)))

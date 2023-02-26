@@ -89,14 +89,20 @@ class RoundTracks(RoundTracksDialog):
                     self.addIntermediateTracks(scaling = classes[classname]['scaling'], netclass = classname, native = True, onlySelection = anySelected, avoid_junctions = avoid)
                 else:
                     for i in range(classes[classname]['passes']):
-                        self.addIntermediateTracks(scaling = classes[classname]['scaling'], netclass = classname, native = False, onlySelection = anySelected, avoid_junctions = avoid)
+                        self.addIntermediateTracks(scaling = classes[classname]['scaling'], netclass = classname, native = False, onlySelection = anySelected, avoid_junctions = avoid, msg=f", pass {i+1}")
 
         # Track selection apparently de-syncs if we've modified it
         if anySelected:
             for t in self.board.GetTracks():
                 t.ClearSelected()
 
-        RebuildAllZones(self.board)
+        # if m_AutoRefillZones is set, we should skip here, but PCBNEW_SETTINGS is not exposed to swig
+        # ZONE_FILLER has SetProgressReporter, but PROGRESS_REPORTER is also not available, so we can't use it
+        # even zone.SetNeedRefill(False) doesn't prevent it running twice
+        self.prog.Pulse("Rebuilding zones...")
+        wx.Yield()
+        filler = pcbnew.ZONE_FILLER(self.board)
+        filler.Fill(self.board.Zones())
 
         if bool(self.prog):
             self.prog.Destroy()
@@ -173,7 +179,7 @@ class RoundTracks(RoundTracksDialog):
         self.config['classes'] = new_config
         self.config['checkboxes'] = {'new_file':self.do_create.IsChecked(), 'native':self.use_native.IsChecked(), 'avoid_junctions':self.avoid_junctions.IsChecked()}
 
-    def addIntermediateTracks( self, scaling = RADIUS_DEFAULT, netclass = None, native = False, onlySelection = False, avoid_junctions = False):
+    def addIntermediateTracks( self, scaling = RADIUS_DEFAULT, netclass = None, native = False, onlySelection = False, avoid_junctions = False, msg=""):
 
         # A 90 degree bend will get a maximum radius of this amount
         RADIUS = pcbnew.FromMM(scaling /(math.sin( math.pi/4 )+1))
@@ -371,7 +377,7 @@ class RoundTracks(RoundTracksDialog):
                         if onlySelection:
                             arc.SetSelected()
 
-            self.prog.Pulse(f"Netclass: {netclass}, {netcode} of {len(netcodes)}")
+            self.prog.Pulse(f"Netclass: {netclass}, {netcode+1} of {len(netcodes)}{msg}")
 
         for t in tracksToRemove:
             board.Remove(t)
