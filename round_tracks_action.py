@@ -392,6 +392,9 @@ class ActionRoundTracks( pcbnew.ActionPlugin ):
         self.icon_file_name = os.path.join(os.path.dirname(__file__), "./round_tracks.png")
 
     def Run( self ):
+        if pcbnew.GetBuildVersion()=='(7.0.0)':
+            wx.MessageBox("Sorry, this plugin is not compatible with KiCad 7.0.0\n\nIt should work with 7.0.1, if that's not out yet you can try KiCad nightly.")
+            return
         board = pcbnew.GetBoard()
         rt = RoundTracks(board, self)
         rt.ShowModal()
