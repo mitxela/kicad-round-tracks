@@ -19,7 +19,7 @@
         {
             "version": "VERSION",
             "status": "stable",
-            "kicad_version": "6.0",
+            "kicad_version": "7.0.1",
             "download_sha256": "SHA256",
             "download_size": DOWNLOAD_SIZE,
             "download_url": "https://github.com/mitxela/kicad-round-tracks/releases/download/VERSION/kicad-round-tracks-VERSION.zip",
