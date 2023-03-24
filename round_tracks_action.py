@@ -201,7 +201,7 @@ class RoundTracks(RoundTracksDialog):
                 viasInNet = []
                 for t in allTracks:
                     if t.GetNetCode() == netcode and (not onlySelection or t.IsSelected()):
-                        if type(t) == pcbnew.PCB_VIA:
+                        if t.GetClass() == 'PCB_VIA':
                             viasInNet.append(t)
                         else:
                             tracksInNet.append(t)
@@ -277,7 +277,7 @@ class RoundTracks(RoundTracksDialog):
                         # if there are any arcs or vias present, skip the intersection entirely
                         skip = False
                         for t1 in tracksHere:
-                            if type(t1) != pcbnew.PCB_TRACK:
+                            if t1.GetClass() != 'PCB_TRACK':
                                 skip = True
                                 break
 
