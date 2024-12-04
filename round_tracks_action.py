@@ -112,6 +112,83 @@ class RoundTracks(RoundTracksDialog):
             wx.MessageBox("Done, took {:.3f} seconds".format(time.time()-start), parent=self)
         self.EndModal(wx.ID_OK)
 
+    def unrun( self, event ):
+
+        anySelected = False
+        for t in self.board.GetTracks():
+            if t.IsSelected():
+                anySelected = True
+                break
+
+        board = self.board
+        netcodes = board.GetNetsByNetcode()
+        allTracks = board.GetTracks()
+        #allPads = board.GetPads()
+
+        for netcode, net in netcodes.items():
+            tracksInNet = []
+            arcsInNet = []
+            for t in allTracks:
+                if t.GetNetCode() == netcode:
+                    if t.GetClass() == 'PCB_ARC' and (not anySelected or t.IsSelected()):
+                        arcsInNet.append(t)
+                    # we may need to extend tracks outside of selection
+                    elif t.GetClass() == 'PCB_TRACK':
+                        tracksInNet.append(t)
+
+            # a.GetAngle
+            # a.GetArcAngleEnd()
+            # a.GetArcAngleStart()
+            # a.GetCentre() [calls CalcArcCenter() ] - centre of arc, not meeting point
+            # a.GetMid() - midpoint on arc (halfangle)
+
+            for a in arcsInNet:
+                start  = a.GetStart()
+                end    = a.GetEnd()
+                center = a.GetCenter()
+                halfAngle = a.GetAngle().AsRadians()/2
+                interdistance = a.GetRadius() / math.cos(halfAngle)
+                if a.IsCCW():
+                    interAngle = a.GetArcAngleStart().AsRadians() +halfAngle
+                else:
+                    interAngle = a.GetArcAngleEnd().AsRadians() -halfAngle
+
+                intersection = pcbnew.VECTOR2I(
+                    center.x + int(interdistance*math.cos(interAngle)),
+                    center.y + int(interdistance*math.sin(interAngle))
+                    )
+                adjust = math.pi/2 if a.IsCCW() else -math.pi/2
+
+                extStart = self.findExtendTrack( start, a.GetArcAngleStart().AsRadians()-adjust, intersection, tracksInNet )
+                extEnd   = self.findExtendTrack( end, a.GetArcAngleEnd().AsRadians()+adjust, intersection, tracksInNet )
+
+    # for junctions: store each centre point. When checking for tracks to extend, also check centre point stack to see if end already extended
+
+        # find all arcs ( + in selection)
+        # calculate angles and centre point
+        # for each end
+            # find samenet, samelayer tracks touching end
+                # if not arc, and angle matches, prepare to extend
+                # if none found, create new track
+
+        # check neither end is a pad or a via - or does this matter?
+
+        wx.MessageBox("Unround test", parent=self)
+        self.EndModal(wx.ID_OK)
+
+    def findExtendTrack( self, pos, angle, intersection, tracksInNet ):
+        angle = normalizeAngle(angle)
+        for t in tracksInNet:
+            if similarPoints(t.GetStart(), pos):
+                if similarAngle(angle, getTrackAngle(t)):
+                    t.SetStart(intersection)
+                    return True
+            if similarPoints(t.GetEnd(), pos):
+                if similarAngle(angle, getTrackAngle(t)+math.pi):
+                    t.SetEnd(intersection)
+                    return True
+        return False
+
     def on_close( self, event ):
         self.EndModal(wx.ID_OK)
 

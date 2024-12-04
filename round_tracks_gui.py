@@ -26,7 +26,7 @@ class RoundTracksDialog ( wx.Dialog ):
 		else:
 			self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 
-		grid_vert = wx.FlexGridSizer( 2, 1, 0, 0 )
+		grid_vert = wx.FlexGridSizer( 3, 1, 0, 0 )
 		grid_vert.AddGrowableCol( 0 )
 		grid_vert.AddGrowableRow( 0 )
 		grid_vert.SetFlexibleDirection( wx.BOTH )
@@ -41,7 +41,7 @@ class RoundTracksDialog ( wx.Dialog ):
 		self.passes = self.netclasslist.AppendTextColumn( u"Passes #", wx.dataview.DATAVIEW_CELL_EDITABLE, 80, wx.ALIGN_LEFT, wx.dataview.DATAVIEW_COL_SORTABLE )
 		grid_vert.Add( self.netclasslist, 1, wx.EXPAND|wx.TOP|wx.RIGHT|wx.LEFT, 5 )
 
-		grid_horiz = wx.FlexGridSizer( 0, 4, 0, 0 )
+		grid_horiz = wx.FlexGridSizer( 0, 3, 0, 0 )
 		grid_horiz.AddGrowableCol( 2 )
 		grid_horiz.SetFlexibleDirection( wx.BOTH )
 		grid_horiz.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
@@ -58,11 +58,20 @@ class RoundTracksDialog ( wx.Dialog ):
 		self.avoid_junctions.SetValue(False)
 		grid_horiz.Add( self.avoid_junctions, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_LEFT, 5 )
 
+		grid_vert.Add( grid_horiz, 1, wx.EXPAND, 5 )
+
+		grid_buttons = wx.FlexGridSizer( 0, 4, 0, 0 )
+		grid_buttons.AddGrowableCol( 2 )
+		grid_buttons.SetFlexibleDirection( wx.BOTH )
+		grid_buttons.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
+
 		self.apply = wx.Button( self, wx.ID_ANY, u"Run", wx.DefaultPosition, wx.Size( 120,-1 ), 0 )
 		self.apply.SetDefault()
-		grid_horiz.Add( self.apply, 0, wx.ALL|wx.EXPAND, 5 )
+		grid_buttons.Add( self.apply, 0, wx.ALL, 5 )
 
-		grid_vert.Add( grid_horiz, 1, wx.EXPAND, 5 )
+		self.unround = wx.Button( self, wx.ID_ANY, u"Unround (native fillets only)", wx.DefaultPosition, wx.Size( 200,-1 ), 0 )
+		grid_buttons.Add( self.unround, 1, wx.ALIGN_CENTER_VERTICAL, 5 )
+		grid_vert.Add( grid_buttons, 1, wx.EXPAND, 5 )
 
 		self.SetSizer( grid_vert )
 		self.Layout()
@@ -74,6 +83,7 @@ class RoundTracksDialog ( wx.Dialog ):
 		self.Bind( wx.EVT_CLOSE, self.on_close )
 		self.netclasslist.Bind( wx.dataview.EVT_DATAVIEW_ITEM_EDITING_DONE, self.on_item_editing, id = wx.ID_ANY )
 		self.apply.Bind( wx.EVT_BUTTON, self.run )
+		self.unround.Bind( wx.EVT_BUTTON, self.unrun )
 
 	def __del__( self ):
 		pass

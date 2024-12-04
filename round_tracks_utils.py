@@ -3,6 +3,7 @@ import math
 from math import pi
 
 tolerance = 10 # in nanometres
+angleTolerance = 0.001 # in radians
 
 def cloneVECTOR2I(vec):
     return pcbnew.VECTOR2I(vec.x, vec.y)
@@ -17,6 +18,10 @@ def reverseTrack(t1):
 # determines whether 2 points are close enough to be considered identical
 def similarPoints(p1, p2):
     return (((p1.x > p2.x - tolerance) and (p1.x < p2.x + tolerance)) and ((p1.y > p2.y - tolerance) and (p1.y < p2.y + tolerance)))
+
+def similarAngle(a1,a2):
+    diff = normalizeAngle(a1-a2)
+    return (abs(diff)<angleTolerance)
 
 # test if an intersection is within the bounds of a pad
 def withinPad(pad, a, tracks):
