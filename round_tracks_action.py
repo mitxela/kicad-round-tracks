@@ -170,12 +170,6 @@ class RoundTracks(RoundTracksDialog):
 
             # check arc angle < pi ? oversize arcs shouldn't exist
 
-            # fixing junctions:
-            # intersections mismatch by over 20,000 IU
-            # arc ends mismatch by zero
-            # junction will always contain more than one arc, but two connected arcs does not guarantee a junction
-            # -> search for arcs that meet the point and angle correctly
-
             for a in arcsInNet:
                 start  = a.GetStart()
                 end    = a.GetEnd()
@@ -219,19 +213,25 @@ class RoundTracks(RoundTracksDialog):
                         x += j.x
                         y += j.y
                     newCenter = pcbnew.VECTOR2I(int(x/len(junction)), int(y/len(junction)))
+                    extremities = []
                     # correct positions of new track ends
                     for idx,(t,s) in enumerate(tracksStartsToExtend):
                         if s in junction:
                             tracksStartsToExtend[idx] = t,newCenter
+                            extremities.append(t.GetStart())
                     for idx,(t,s) in enumerate(tracksEndsToExtend):
                         if s in junction:
                             tracksEndsToExtend[idx] = t,newCenter
-                    for idx,sp, ep, width, layer, n in enumerate(tracksToAdd):
+                            extremities.append(t.GetEnd())
+                    for idx, (sp, ep, width, layer, n) in enumerate(tracksToAdd):
                         if layer==iL and net==n and sp in junction:
                             tracksToAdd[idx] = newCenter, ep, width, layer, n
+                            extremities.append(ep)
 
                     # remove unmodified, straight tracks that pass through the junction
-
+                    for t in tracksInNet:
+                        if t.GetLayer()==iL and t.GetStart() in extremities and t.GetEnd() in extremities:
+                            tracksToRemove.append(t)
 
             # junctions may stack the same track start/end twice
             for t, s in tracksStartsToExtend:
