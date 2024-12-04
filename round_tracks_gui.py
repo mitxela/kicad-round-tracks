@@ -26,11 +26,14 @@ class RoundTracksDialog ( wx.Dialog ):
 		else:
 			self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 
-		grid_vert = wx.FlexGridSizer( 3, 1, 0, 0 )
+		grid_vert = wx.FlexGridSizer( 4, 1, 0, 0 )
 		grid_vert.AddGrowableCol( 0 )
-		grid_vert.AddGrowableRow( 0 )
+		grid_vert.AddGrowableRow( 1 )
 		grid_vert.SetFlexibleDirection( wx.BOTH )
 		grid_vert.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
+
+		blurb = wx.StaticText(self, wx.ID_ANY, label="See github page for instructions. Always run DRC after rounding!")
+		grid_vert.Add( blurb, 1, wx.TOP|wx.LEFT, 5 )
 
 		self.netclasslist = wx.dataview.DataViewListCtrl( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.netclasslist.SetMinSize( wx.Size( 450,100 ) )
@@ -70,7 +73,7 @@ class RoundTracksDialog ( wx.Dialog ):
 		grid_buttons.Add( self.apply, 0, wx.ALL, 5 )
 
 		self.unround = wx.Button( self, wx.ID_ANY, u"Unround (native fillets only)", wx.DefaultPosition, wx.Size( 200,-1 ), 0 )
-		grid_buttons.Add( self.unround, 1, wx.ALIGN_CENTER_VERTICAL, 5 )
+		grid_buttons.Add( self.unround, 1, wx.TOP, 5 )
 		grid_vert.Add( grid_buttons, 1, wx.EXPAND, 5 )
 
 		self.SetSizer( grid_vert )

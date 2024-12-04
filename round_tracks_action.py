@@ -125,6 +125,7 @@ class RoundTracks(RoundTracksDialog):
         tracksEndsToExtend = []
         tracksToAdd = []
         tracksToRemove = []
+        fail=False
 
         def findExtendTrack( pos, angle, intersection, tracksInNet, arc ):
             angle = normalizeAngle(angle)
@@ -178,6 +179,10 @@ class RoundTracks(RoundTracksDialog):
                 endAngle = a.GetArcAngleEnd().AsRadians()
                 halfAngle = a.GetAngle().AsRadians()/2
                 interdistance = a.GetRadius() / math.cos(halfAngle)
+                if interdistance > 2**32:
+                    fail=True
+                    tracksToRemove.append(a)
+                    continue
                 if a.IsCCW():
                     interAngle = startAngle +halfAngle
                 else:
@@ -256,8 +261,13 @@ class RoundTracks(RoundTracksDialog):
         for t in tracksToRemove:
             board.Remove(t)
 
-        wx.MessageBox("Unrounded", parent=self)
+        if fail:
+            wx.MessageBox("Some arcs failed to unround.\n\nThis is usually caused by very, very small arcs which have nonsensical angles.", style=wx.ICON_ERROR)
+
+        wx.MessageBox("Unrounded!\n\nPlease note, due to rounding errors, a round trip may not exactly match the original.", parent=self)
+
         self.EndModal(wx.ID_OK)
+
 
     def on_close( self, event ):
         self.EndModal(wx.ID_OK)
