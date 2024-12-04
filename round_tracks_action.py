@@ -407,12 +407,12 @@ class RoundTracks(RoundTracksDialog):
                         if skip:
                             continue
 
-                        shortest=-1
+                        shortest=1e9
                         for t1 in tracksHere:
                             if id(t1) not in trackLengths:
                                 trackLengths[id(t1)] = t1.GetLength()
-                            if shortest == -1 or trackLengths[id(t1)]<trackLengths[id(shortest)]:
-                                shortest = t1
+                            if trackLengths[id(t1)]<shortest:
+                                shortest = trackLengths[id(t1)]
 
                         #sort these tracks by angle, so new tracks can be drawn between them
                         tracksHere.sort(key = getTrackAngle)
@@ -422,9 +422,12 @@ class RoundTracks(RoundTracksDialog):
                             for t1 in range(len(tracksHere)):
                                 halfTrackAngle[t1] = getTrackAngleDifference( tracksHere[t1], tracksHere[(t1+1)%len(tracksHere)] )/2
 
+                            shortenAmount = shortest * 0.5
                             for t1 in range(len(tracksHere)):
                                 f = math.sin( halfTrackAngle[t1] )+1
-                                if shortenTrack(tracksHere[t1], min(trackLengths[id(shortest)] *0.5, RADIUS *f )):
+                                shortenAmount = min( RADIUS *f, shortenAmount )
+                            for t1 in range(len(tracksHere)):
+                                if shortenTrack(tracksHere[t1], shortenAmount):
                                     tracksToRemove.append(tracksHere[t1])
 
                             for t1 in range(len(tracksHere)):
@@ -441,11 +444,13 @@ class RoundTracks(RoundTracksDialog):
                                         arcsToAdd.append((sp, ep, mp, tracksHere[t1].GetWidth(), tracksHere[t1].GetLayer(), tracksHere[t1].GetNetCode()))
 
                         else:
-                            #shorten all these tracks
+                            shortenAmount = RADIUS
                             for t1 in range(len(tracksHere)):
                                 theta = math.pi/2 - getTrackAngleDifference( tracksHere[t1], tracksHere[(t1+1)%len(tracksHere)] )/2
                                 f = 1/(2*math.cos(theta) +2)
-                                shortenTrack(tracksHere[t1], min(trackLengths[id(shortest)] * f, RADIUS ))
+                                shortenAmount = min(shortenAmount, shortest * f)
+                            for t1 in range(len(tracksHere)):
+                                shortenTrack(tracksHere[t1], shortenAmount)
 
                             #connect the new startpoints in a circle around the old center point
                             for t1 in range(len(tracksHere)):

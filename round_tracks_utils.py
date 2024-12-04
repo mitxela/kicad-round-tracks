@@ -47,7 +47,7 @@ def shortenTrack(t1, amountToShorten):
         t1.SetStart(cloneVECTOR2I(t1.GetEnd()))
         return True
 
-    angle = normalizeAngle(getTrackAngle(t1))
+    angle = getTrackAngle(t1)
     newX = t1.GetStart().x + math.cos(angle)*amountToShorten
     newY = t1.GetStart().y + math.sin(angle)*amountToShorten
     t1.SetStart(pcbnew.VECTOR2I(int(newX), int(newY)))
