@@ -125,6 +125,40 @@ class RoundTracks(RoundTracksDialog):
         allTracks = board.GetTracks()
         #allPads = board.GetPads()
 
+        tracksStartsToExtend = []
+        tracksEndsToExtend = []
+        tracksToAdd = []
+        tracksToRemove = []
+
+        def findExtendTrack( pos, angle, intersection, tracksInNet, arc ):
+            angle = normalizeAngle(angle)
+            layer = arc.GetLayer()
+            for t in tracksInNet:
+                if t.GetLayer() != layer:
+                    continue
+                if similarPoints(t.GetStart(), pos):
+                    if similarAngle(angle, getTrackAngle(t)):
+                        #t.SetStart(intersection)
+                        tracksStartsToExtend.append( (t, intersection) )
+                        return True
+                if similarPoints(t.GetEnd(), pos):
+                    if similarAngle(angle, getTrackAngle(t)+math.pi):
+                        #t.SetEnd(intersection)
+                        tracksEndsToExtend.append( (t, intersection) )
+                        return True
+            # before creating new track, look for new co-linear tracks
+            width = arc.GetWidth()
+            net = arc.GetNetCode()
+            for i,t in enumerate(tracksToAdd):
+                (sp,ep,w,l,n) = t
+                if (n==net and l==layer and w==width and similarPoints(sp, pos) and
+                    similarAngle(math.atan2(ep.y-sp.y,ep.x-sp.x), math.atan2(pos.y-intersection.y,pos.x-intersection.x))):
+                    tracksToAdd[i]= (intersection, ep ,w,l,n)
+                    return False
+
+            tracksToAdd.append((pos, intersection, width, layer, net))
+            return False
+
         for netcode, net in netcodes.items():
             tracksInNet = []
             arcsInNet = []
@@ -136,11 +170,7 @@ class RoundTracks(RoundTracksDialog):
                     elif t.GetClass() == 'PCB_TRACK':
                         tracksInNet.append(t)
 
-            # a.GetAngle
-            # a.GetArcAngleEnd()
-            # a.GetArcAngleStart()
-            # a.GetCentre() [calls CalcArcCenter() ] - centre of arc, not meeting point
-            # a.GetMid() - midpoint on arc (halfangle)
+            # check arc angle < pi ? oversize arcs shouldn't exist
 
             for a in arcsInNet:
                 start  = a.GetStart()
@@ -159,35 +189,34 @@ class RoundTracks(RoundTracksDialog):
                     )
                 adjust = math.pi/2 if a.IsCCW() else -math.pi/2
 
-                extStart = self.findExtendTrack( start, a.GetArcAngleStart().AsRadians()-adjust, intersection, tracksInNet )
-                extEnd   = self.findExtendTrack( end, a.GetArcAngleEnd().AsRadians()+adjust, intersection, tracksInNet )
+                findExtendTrack( start, a.GetArcAngleStart().AsRadians()-adjust, intersection, tracksInNet, a )
+                findExtendTrack( end, a.GetArcAngleEnd().AsRadians()+adjust, intersection, tracksInNet, a )
+                tracksToRemove.append(a)
 
-    # for junctions: store each centre point. When checking for tracks to extend, also check centre point stack to see if end already extended
 
-        # find all arcs ( + in selection)
-        # calculate angles and centre point
-        # for each end
-            # find samenet, samelayer tracks touching end
-                # if not arc, and angle matches, prepare to extend
-                # if none found, create new track
+        # junctions may stack the same track start/end twice
+        for t, s in tracksStartsToExtend:
+            t.SetStart(s)
 
-        # check neither end is a pad or a via - or does this matter?
+        for t, s in tracksEndsToExtend:
+            t.SetEnd(s)
 
-        wx.MessageBox("Unround test", parent=self)
+        for sp, ep, width, layer, net in tracksToAdd:
+            track = pcbnew.PCB_TRACK(board)
+            track.SetStart(sp)
+            track.SetEnd(ep)
+            track.SetWidth(width)
+            track.SetLayer(layer)
+            board.Add(track)
+            track.SetNetCode(net)
+            if anySelected:
+                track.SetSelected()
+
+        for t in tracksToRemove:
+            board.Remove(t)
+
+        wx.MessageBox("Unrounded", parent=self)
         self.EndModal(wx.ID_OK)
-
-    def findExtendTrack( self, pos, angle, intersection, tracksInNet ):
-        angle = normalizeAngle(angle)
-        for t in tracksInNet:
-            if similarPoints(t.GetStart(), pos):
-                if similarAngle(angle, getTrackAngle(t)):
-                    t.SetStart(intersection)
-                    return True
-            if similarPoints(t.GetEnd(), pos):
-                if similarAngle(angle, getTrackAngle(t)+math.pi):
-                    t.SetEnd(intersection)
-                    return True
-        return False
 
     def on_close( self, event ):
         self.EndModal(wx.ID_OK)
