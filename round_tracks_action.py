@@ -96,10 +96,10 @@ class RoundTracks(RoundTracksDialog):
         # if m_AutoRefillZones is set, we should skip here, but PCBNEW_SETTINGS is not exposed to swig
         # ZONE_FILLER has SetProgressReporter, but PROGRESS_REPORTER is also not available, so we can't use it
         # even zone.SetNeedRefill(False) doesn't prevent it running twice
-        self.prog.Pulse("Rebuilding zones...")
-        wx.Yield()
-        filler = pcbnew.ZONE_FILLER(self.board)
-        filler.Fill(self.board.Zones())
+        #self.prog.Pulse("Rebuilding zones...")
+        #wx.Yield()
+        #filler = pcbnew.ZONE_FILLER(self.board)
+        #filler.Fill(self.board.Zones())
 
         if bool(self.prog):
             self.prog.Destroy()
