@@ -88,11 +88,6 @@ class RoundTracks(RoundTracksDialog):
                     for i in range(classes[classname]['passes']):
                         self.addIntermediateTracks(scaling = classes[classname]['scaling'], netclass = classname, native = False, onlySelection = anySelected, avoid_junctions = avoid, msg=f", pass {i+1}")
 
-        # Track selection apparently de-syncs if we've modified it
-        if anySelected:
-            for t in self.board.GetTracks():
-                t.ClearSelected()
-
         # if m_AutoRefillZones is set, we should skip here, but PCBNEW_SETTINGS is not exposed to swig
         # ZONE_FILLER has SetProgressReporter, but PROGRESS_REPORTER is also not available, so we can't use it
         # even zone.SetNeedRefill(False) doesn't prevent it running twice
