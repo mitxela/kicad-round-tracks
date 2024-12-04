@@ -13,10 +13,7 @@
 
 # extensively modified by Julian Loiacono, Oct 2018
 # updated and repacked as action plugin by Antoine Pintout, May 2019
-
-# This script will round PCBNEW traces by shortening traces at intersections, 
-# and filling new traces between. This process is repeated four times.
-# The resulting board is saved in a new file. 
+# updated subdivision algorithm + native arc support by mitxela, 2021-2024
 
 import pcbnew
 import math
@@ -123,7 +120,6 @@ class RoundTracks(RoundTracksDialog):
         board = self.board
         netcodes = board.GetNetsByNetcode()
         allTracks = board.GetTracks()
-        #allPads = board.GetPads()
 
         tracksStartsToExtend = []
         tracksEndsToExtend = []
@@ -162,6 +158,8 @@ class RoundTracks(RoundTracksDialog):
         for netcode, net in netcodes.items():
             tracksInNet = []
             arcsInNet = []
+            intersectionStack = []
+
             for t in allTracks:
                 if t.GetNetCode() == netcode:
                     if t.GetClass() == 'PCB_ARC' and (not anySelected or t.IsSelected()):
@@ -172,16 +170,24 @@ class RoundTracks(RoundTracksDialog):
 
             # check arc angle < pi ? oversize arcs shouldn't exist
 
+            # fixing junctions:
+            # intersections mismatch by over 20,000 IU
+            # arc ends mismatch by zero
+            # junction will always contain more than one arc, but two connected arcs does not guarantee a junction
+            # -> search for arcs that meet the point and angle correctly
+
             for a in arcsInNet:
                 start  = a.GetStart()
                 end    = a.GetEnd()
                 center = a.GetCenter()
+                startAngle = a.GetArcAngleStart().AsRadians()
+                endAngle = a.GetArcAngleEnd().AsRadians()
                 halfAngle = a.GetAngle().AsRadians()/2
                 interdistance = a.GetRadius() / math.cos(halfAngle)
                 if a.IsCCW():
-                    interAngle = a.GetArcAngleStart().AsRadians() +halfAngle
+                    interAngle = startAngle +halfAngle
                 else:
-                    interAngle = a.GetArcAngleEnd().AsRadians() -halfAngle
+                    interAngle = endAngle -halfAngle
 
                 intersection = pcbnew.VECTOR2I(
                     center.x + int(interdistance*math.cos(interAngle)),
@@ -189,17 +195,52 @@ class RoundTracks(RoundTracksDialog):
                     )
                 adjust = math.pi/2 if a.IsCCW() else -math.pi/2
 
-                findExtendTrack( start, a.GetArcAngleStart().AsRadians()-adjust, intersection, tracksInNet, a )
-                findExtendTrack( end, a.GetArcAngleEnd().AsRadians()+adjust, intersection, tracksInNet, a )
+                intersectionStack.append( (intersection, a.GetLayer()) )
+
+                findExtendTrack( start, startAngle-adjust, intersection, tracksInNet, a )
+                findExtendTrack( end, endAngle+adjust, intersection, tracksInNet, a )
                 tracksToRemove.append(a)
 
+            # find junctions
+            for i,iL in intersectionStack:
+                junction = []
+                for j,jL in intersectionStack:
+                    if i==j or iL!=jL: continue
+                    if ( ((i.x > j.x - unpickJunctionTolerance)
+                     and  (i.x < j.x + unpickJunctionTolerance))
+                     and ((i.y > j.y - unpickJunctionTolerance)
+                     and  (i.y < j.y + unpickJunctionTolerance))):
+                        junction.append(j)
+                if len(junction)>0:
+                    junction.append(i)
+                    x = 0
+                    y = 0
+                    for j in junction:
+                        x += j.x
+                        y += j.y
+                    newCenter = pcbnew.VECTOR2I(int(x/len(junction)), int(y/len(junction)))
+                    # correct positions of new track ends
+                    for idx,(t,s) in enumerate(tracksStartsToExtend):
+                        if s in junction:
+                            tracksStartsToExtend[idx] = t,newCenter
+                    for idx,(t,s) in enumerate(tracksEndsToExtend):
+                        if s in junction:
+                            tracksEndsToExtend[idx] = t,newCenter
+                    for idx,sp, ep, width, layer, n in enumerate(tracksToAdd):
+                        if layer==iL and net==n and sp in junction:
+                            tracksToAdd[idx] = newCenter, ep, width, layer, n
 
-        # junctions may stack the same track start/end twice
-        for t, s in tracksStartsToExtend:
-            t.SetStart(s)
+                    # remove unmodified, straight tracks that pass through the junction
 
-        for t, s in tracksEndsToExtend:
-            t.SetEnd(s)
+
+            # junctions may stack the same track start/end twice
+            for t, s in tracksStartsToExtend:
+                t.SetStart(s)
+            tracksStartsToExtend = []
+
+            for t, s in tracksEndsToExtend:
+                t.SetEnd(s)
+            tracksEndsToExtend = []
 
         for sp, ep, width, layer, net in tracksToAdd:
             track = pcbnew.PCB_TRACK(board)

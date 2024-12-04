@@ -4,6 +4,7 @@ from math import pi
 
 tolerance = 10 # in nanometres
 angleTolerance = 0.001 # in radians
+unpickJunctionTolerance = 100000 # 0.01mm
 
 def cloneVECTOR2I(vec):
     return pcbnew.VECTOR2I(vec.x, vec.y)
